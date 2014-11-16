@@ -1,0 +1,82 @@
+<style>
+	.kepDiv {
+		padding: auto auto;
+	}
+	.kepDiv img {
+		width : 100%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+	}
+	.filterDiv {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		max-width: 500px;
+		margin: 0 auto;
+	}
+</style>
+
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+	</div>
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-right-c" ng-click="cont()"></button>
+	</div>
+</ion-header-bar>
+
+<div class="kepDiv card" >
+	<img  id="originalPhoto" class="card" />
+</div>
+<ion-scroll direction="x" class="wide-as-needed filterDiv card">
+	<section id="filterButtons">
+
+		<div id="reset" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="fluorescent" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="nostalgia" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="phykos" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="lotus" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="memphis" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="deutlich" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+		<div id="sumie" class="filter button">
+			<div class="filter-tag">
+
+			</div>
+		</div>
+
+	</section>
+</ion-scroll>
+

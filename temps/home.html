@@ -1,0 +1,36 @@
+<style>
+	.mainMenu {
+		position: fixed;
+		width: 100%;
+		padding: 20px;
+		bottom: 30px;
+	}
+
+</style>
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+</ion-header-bar>
+<img width="100%" src="css/background-home.jpg" />
+<div class="mainMenu">
+
+	<button class="button button-block button-light icon ion-android-camera" data-ng-click="takePic()">
+		Kamera
+	</button>
+
+	<button  class="button button-block button-light icon ion-ios7-albums-outline" data-ng-click="newalbum()">
+		Új album
+	</button>
+	<button  class="button button-block button-light icon ion-clock" data-ng-click="timeline()">
+		Idővonal
+	</button>
+	<ion-scroll direction="x" id="kepek"  class="wide-as-needed" >
+		<button ng-click="albumline({{album.id}})" class="item item-thumbnail-left album button" ng-repeat='album in albums'>
+			<h2>{{album.albumName}}</h2>
+			<p>
+				{{album.albumDate}}
+			</p>
+		</button>
+	</ion-scroll>
+
+</div>
+

@@ -1,0 +1,60 @@
+
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+	<div  class="buttons">
+		<button style="color: white" class="button button-icon icon ion-home" ng-click="home()"></button>
+	</div>
+</ion-header-bar>
+<ion-content>
+
+	<div style="padding: 10px;">
+		
+		
+		<ion-scroll direction="x" id="kepek"  class="wide-as-needed" >
+			<img style="background-image: url('{{image}}')" ng-click="checkImagesSize() ? show($index) : console.log('fail')" class="eventImgs thumb button" id="kep" ng-repeat='image in images'>
+		</ion-scroll>
+		
+
+		<div class="list">
+			<form id="newEvent">
+
+				<label class="item item-input">
+					<input type="text" ng-model="data.message" id="megjegyzes" placeholder="Saját megjegyzés..."/>
+				</label>
+				<label class="item item-input item-select">
+					<div class="input-label">
+						Mérföldkő ?
+					</div>
+					<select ng-model="data.milestone" >
+						<option selected>Mosolygás</option>
+						<option>Nevetés</option>
+						<option>Lábfejrágcsálás</option>
+						<option>Különböző hangok mint berregés, buborék fújás</option>
+						<option>Hajfésülés, fogmosás</option>
+						<option>Kedvenc és elválaszthatatlan tárgyak</option>
+						<option>Puszi dobás</option>
+					</select> </label>
+				<label class="item item-input item-select">
+					<div class="input-label">
+						Melyik album ?
+					</div> <select ng-model="data.album" ng-options="album.albumName for album in albums"></select></label>
+			</form>
+		</div>
+
+		<button  ng-if='!mentve'  class="button button-block button-light icon ion-plus-round" ng-click="plusz1Image()">
+			1 kép
+		</button>
+		<button  ng-if='!mentve'  class="button button-block button-light icon ion-bookmark" ng-click="saveEvent()">
+			Esemény mentése
+		</button>
+
+		<button ng-if='mentve' class="button button-block button-pink icon ion-checkmark" >
+			Esemény elmentve
+		</button>
+
+		
+
+	</div>
+
+</ion-content>

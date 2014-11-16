@@ -1,0 +1,37 @@
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+	</div>
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+</ion-header-bar>
+<ion-content>
+	<div class="list list-inset">
+		<form id="form-signup" role="form" autocomplete="off" style="padding: 15px 15px" >
+			<label class="item item-input">
+				<input name="vezeteknev" type="text" placeholder="Vezetéknév">
+			</label>
+			<span class="help-block" ng-show="errorVezeteknev">{{ errorVezeteknev}}</span>
+			<label class="item item-input">
+				<input name="keresztnev" type="text" placeholder="Keresztnév">
+			</label>
+			<span class="help-block" ng-show="errorKeresztnev">{{ errorKeresztnev}}</span>
+			<label class="item item-input">
+				<input name="email" type="text" placeholder="Email">
+			</label>
+			<span class="help-block" ng-show="errorEmail">{{ errorEmail}}</span>
+			<label class="item item-input">
+				<input name="jelszo" type="password" placeholder="Jelszó">
+			</label>
+			<label class="item item-input">
+				<input name="rejelszo" type="password" placeholder="Jelszó újra">
+			</label>
+			<span class="help-block" ng-show="errorJelszo">{{errorJelszo}}</span>
+		</form>
+	</div>
+	<div class="padding">
+		<button class="button button-block button-pink" ng-click='regAjax()'>
+			Regisztráció
+		</button>
+	</div>
+	</div>
+</ion-content>

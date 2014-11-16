@@ -1,0 +1,25 @@
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+	</div>
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+</ion-header-bar>
+<ion-content>
+	<div class="list list-inset">
+		<form id="form-login" autocomplete="off" style="padding: 15px 15px">
+			<label class="item item-input">
+				<input name="email" type="text" placeholder="Email">
+			</label>
+			<label class="item item-input">
+				<input name='jelszo' type="password" placeholder="Jelszó">
+			</label>
+			<span ng-show="errorLogin">{{ errorLogin }}</span>
+		</form>
+	</div>
+	<div class="padding">
+		<button class="button button-block button-pink" ng-click="logAjax()">
+			Bejelentkezés
+		</button>
+	</div>
+	</div>
+</ion-content>

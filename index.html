@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+		<link href="lib/ionic/css/ionic.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+		<link href="css/jquery.nailthumb.1.1.css" />
+
+		<script>
+			var serverURL = 'http://192.168.1.184/';
+
+			function checkConnection() {
+				var networkState = navigator.network.connection.type;
+
+				var states = {};
+				states[Connection.UNKNOWN] = 'Unknown connection';
+				states[Connection.ETHERNET] = 'Ethernet connection';
+				states[Connection.WIFI] = 'WiFi connection';
+				states[Connection.CELL_2G] = 'Cell 2G connection';
+				states[Connection.CELL_3G] = 'Cell 3G connection';
+				states[Connection.CELL_4G] = 'Cell 4G connection';
+				states[Connection.NONE] = 'No network connection';
+
+				if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
+					return false;
+				} else {
+					return true;
+				}
+			};
+
+		</script>
+
+		<!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+		<link href="css/ionic.app.css" rel="stylesheet">
+		-->
+
+		<!-- ionic/angularjs js -->
+		<script src="lib/ionic/js/ionic.bundle.js"></script>
+
+		<!-- cordova script (this will be a 404 during development) -->
+		<script src="js/phonegap.js"></script>
+		
+	
+		
+		<!--csak fejlesztésre kell
+		<script src="phonegap.js"></script>
+		<script src="js/phonegap.js"></script>
+		-->
+		
+		<!-- third party js -->
+		<script src="js/hello.js"></script>
+
+		<!-- jquery js -->
+		<script src="js/jquery.min.js"></script>		
+        <script type="text/javascript" src="js/jquery.nailthumb.1.1.js"></script>
+
+		<script src="js/filterous.js"></script>
+		<script src="js/filterousEffects.js"></script>
+
+		<!-- your app's js -->
+		<script src="js/app.js"></script>
+		<script src="js/sync.js"></script>
+
+	</head>
+	<body ng-app="starter">
+		
+		<ion-pane>
+			<div ui-view  class='view'></div>
+		</ion-pane>
+
+	</body>
+</html>

@@ -1,0 +1,161 @@
+.view {
+	background: url('background.jpg');
+	-moz-background-size: cover;
+	-webkit-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+
+/*
+ logo css
+ */
+.card {
+	max-width: 600px;
+	margin: auto auto;
+	padding: 0px;
+	background-color: transparent;
+	box-shadow: none;
+}
+
+/*
+ filterek css
+ */
+
+.button.button-pink {
+    background-color: #F521A2;
+    color: #fff;
+}
+.wide-as-needed {
+	overflow: scroll;
+	white-space: nowrap;
+	width: 100%;
+	margin: auto auto;
+	text-align: center
+}
+.scroll {
+	min-width: 100%;
+}
+.bar.bar-loading {
+	display: block;
+	height: 24px;
+	/* starts right below a normal header */
+	top: 44px;
+	/* make the text centered vertically and horizontally */
+	text-align: center;
+	padding: 0;
+	line-height: 24px;
+	/* transition 'sliding down' (check below)*/
+	-webkit-transition: 200ms all;
+}
+
+/*
+ * make the content's top changes animate.
+ * might not always look good, but looks
+ * good when our loader is added & removed
+ */
+.has-header {
+	-webkit-transition: 200ms top;
+}
+.has-header.has-loading {
+	/* 44px (header) + 24px */
+	top: 68px;
+}
+.filter {
+	width: 100px;
+	height: 100px;
+	padding: 0px;
+}
+
+.album {
+	width: 90px;
+	height: 70px;
+	padding: 0px;
+}
+.thumb {
+	display: inline-block;
+	width: 200px;
+	height: 200px;
+	padding: 0px;
+	background-position: center center;
+	background-size: cover;
+}
+
+#reset {
+	background: url("filters/baba.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#fluorescent {
+	background: url("filters/fluorescent.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#nostalgia {
+	background: url("filters/nostalgia.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#phykos {
+	background: url("filters/phykos.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#lotus {
+	background: url("filters/lotus.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#memphis {
+	background: url("filters/memphis.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#deutlich {
+	background: url("filters/deutlich.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+#sumie {
+	background: url("filters/sumie.jpg") no-repeat 0 0;
+	background-size: cover;
+}
+
+/* make loading bar slide up/down */
+.bar-loading.ng-enter, .bar-loading.ng-leave.ng-leave-active {
+	height: 0;
+	border-width: 0px;
+}
+.bar-loading.ng-enter.ng-enter-active, .bar-loading.ng-leave {
+	height: 24px;
+	border-width: 1px;
+}
+
+.transparent {
+	background: transparent !important;
+}
+.image-modal {
+	width: 100% !important;
+	height: 100%;
+	top: 0 !important;
+	left: 0 !important;
+}
+.fullscreen-image {
+	max-width: 100%;
+	max-height: 100%;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	overflow: auto;
+	position: fixed;
+	right: 0;
+	top: 0;
+}
+.slider {
+	width: 100%;
+	height: 100%;
+}
+
+p.info {
+	position: absolute;
+	bottom: 55px;
+	margin: 0 auto;
+	width: 100%;
+	display: block;
+	text-align: center;
+	font-size: 28px;
+	color: #ffffff;
+}
