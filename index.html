@@ -6,7 +6,6 @@
 
 		<link href="lib/ionic/css/ionic.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
-		<link href="css/jquery.nailthumb.1.1.css" />
 
 		<script>
 			var serverURL = 'http://192.168.1.184/';
@@ -39,22 +38,23 @@
 		<!-- ionic/angularjs js -->
 		<script src="lib/ionic/js/ionic.bundle.js"></script>
 
+		<!-- jquery js -->
+		<script src="js/jquery.min.js"></script>
+
+		<!-- date picker -->
+		<script src="mobiscroll.js" type="text/javascript"></script>
+		<link href="mobiscroll.css" rel="stylesheet" type="text/css" />
+
 		<!-- cordova script (this will be a 404 during development) -->
-		<script src="phonegap.js"></script>
-		
-	
-		
+		<script src="js/phonegap.js"></script>
+
 		<!--csak fejlesztésre kell
 		<script src="phonegap.js"></script>
 		<script src="js/phonegap.js"></script>
 		-->
-		
+
 		<!-- third party js -->
 		<script src="js/hello.js"></script>
-
-		<!-- jquery js -->
-		<script src="js/jquery.min.js"></script>		
-        <script type="text/javascript" src="js/jquery.nailthumb.1.1.js"></script>
 
 		<script src="js/filterous.js"></script>
 		<script src="js/filterousEffects.js"></script>
@@ -65,7 +65,7 @@
 
 	</head>
 	<body ng-app="starter">
-		
+
 		<ion-pane>
 			<div ui-view  class='view'></div>
 		</ion-pane>
