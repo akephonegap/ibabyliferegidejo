@@ -53,6 +53,11 @@ angular.module('starter', ['ionic'])
       templateUrl: 'temps/timeline.html',
       controller: 'timelineCtrl'
     })
+     .state('newAlbum', {
+      url: '/newAlbum',
+      templateUrl: 'temps/newAlbum.html',
+      controller: 'newAlbumCtrl'
+    })
     .state('albumline', {
       url: '/albumline',
       templateUrl: 'temps/albumline.html',
@@ -74,9 +79,8 @@ angular.module('starter', ['ionic'])
 
 .factory('userService', ['$rootScope','$ionicPopup', '$state', function($rootScope,$ionicPopup, $state) {
 			
-			
-			
-  
+
+
 
   // Hello.js Functions
     hello.init({
@@ -104,24 +108,19 @@ angular.module('starter', ['ionic'])
 	          $rootScope.user = json;
 	          $rootScope.$apply($rootScope.user);
 	          $rootScope.userStatus = true;
-	          $rootScope.network = 'facebook';	
+	          $rootScope.network = 'facebook';
+	          window.localStorage.setItem("username", $rootScope.user.name );
+			  window.localStorage.setItem("email", $rootScope.user.email);	    	
 	          $state.go('home');
 	        });
 	      });     
       }else{
       	  var myPopup = $ionicPopup.show({
-			    template: 'Két lehetőséged van',
+			    template: 'Ellenőrizze az internetkapcsolatot, és próbáljon meg újra bejelentkezni',
 			    title: 'Nincs internetkapcsolatod !',
 			    buttons: [
-			      { text: '<b>Továbblépés offline módban</b>',	      
-			        type: 'button-light',
-			        onTap: function(e) {
-			          $rootScope.guest = true;
-	  				  $state.go('home'); 
-			        }
-			      },
 			      {
-			        text: '<b>Megpróbálok újra csatlakozni</b>',
+			        text: '<b>Rendben</b>',
 			        type: 'button-pink',
 			        onTap: function(e) {
 			        }
@@ -150,24 +149,18 @@ angular.module('starter', ['ionic'])
 	          $rootScope.$apply($rootScope.user);
 	          $rootScope.userStatus = true;
 	          $rootScope.network = 'google';
-	          
+	          window.localStorage.setItem("username", $rootScope.user.name );
+			  window.localStorage.setItem("email", $rootScope.user.email);	    
 	          $state.go('home');
 	        });
 	      });
       }else{
       	  var myPopup = $ionicPopup.show({
-			    template: 'Két lehetőséged van',
+			    template: 'Ellenőrizze az internetkapcsolatot, és próbáljon meg újra bejelentkezni',
 			    title: 'Nincs internetkapcsolatod !',
 			    buttons: [
-			      { text: '<b>Továbblépés offline módban</b>',	      
-			        type: 'button-light',
-			        onTap: function(e) {
-			          $rootScope.guest = true;
-	  				  $state.go('home'); 
-			        }
-			      },
 			      {
-			        text: '<b>Megpróbálok újra csatlakozni</b>',
+			        text: '<b>Rendben</b>',
 			        type: 'button-pink',
 			        onTap: function(e) {
 			        }
@@ -194,24 +187,18 @@ angular.module('starter', ['ionic'])
 	          $rootScope.$apply($rootScope.user);
 	          $rootScope.userStatus = true;
 	          $rootScope.network = 'twitter';
-	
+			  window.localStorage.setItem("username", $rootScope.user.name );
+			  window.localStorage.setItem("email", $rootScope.user.email);	    
 	          $state.go('home');
 	        });
 	      });
       }else{
       	  var myPopup = $ionicPopup.show({
-			    template: 'Két lehetőséged van',
+			    template: 'Ellenőrizze az internetkapcsolatot, és próbáljon meg újra bejelentkezni',
 			    title: 'Nincs internetkapcsolatod !',
 			    buttons: [
-			      { text: '<b>Továbblépés offline módban</b>',	      
-			        type: 'button-light',
-			        onTap: function(e) {
-			          $rootScope.guest = true;
-	  				  $state.go('home'); 
-			        }
-			      },
 			      {
-			        text: '<b>Megpróbálok újra csatlakozni</b>',
+			        text: '<b>Rendben</b>',
 			        type: 'button-pink',
 			        onTap: function(e) {
 			        }
@@ -233,13 +220,13 @@ angular.module('starter', ['ionic'])
   return service;
 }])
 
-.controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicLoading','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicLoading, userService) {
-   $scope.data = {};
-  
-  
-  $scope.logoutFacebook = userService.logoutFacebook;
-  $scope.logoutGoogle = userService.logoutGoogle;
-  $scope.logoutTwitter = userService.logoutTwitter;
+.controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicSideMenuDelegate','$ionicLoading','$http','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicSideMenuDelegate,$ionicLoading,$http, userService) {
+    $scope.data = {};  
+
+	dao.getOfflineEvent(function(events) {
+		$scope.offlineEvents = events;
+	}); 
+
 	
 	
 	$scope.albumline = function(albumid){
@@ -248,6 +235,9 @@ angular.module('starter', ['ionic'])
 	};
 	$scope.filter = function() {		 
 		$state.go('filter');
+	};
+	$scope.newalbum = function() {		 
+		$state.go('newAlbum');
 	};
 	
 	$scope.timeline = function(){
@@ -268,66 +258,16 @@ angular.module('starter', ['ionic'])
     $scope.takePic = function() {
      	
 		if ($scope.albums.length==0) {
-			$scope.data = {};
-    	var myPopup = $ionicPopup.show({
-		    template: '<label class="item item-input"><span class="input-label">Név</span><input ng-model="data.albumName" type="text"></label>'+
-		    		  '<label class="item item-input"><span class="input-label">Születésnap</span><input max='+currentDate()+' ng-model="data.albumDate" type="date"></label>'+
-		    		  '<label class="item item-input item-select"><div class="input-label">Nem</div><select ng-model="data.albumSex"><option>Fiú</option><option>Lány</option></select> </label>',		    
-		    title: 'Új album',
-		    subTitle: 'Mielőtt megörökítenéd gyermeked pillanatait, készíts neki egy albumot.',
-		    scope: $scope,
-		    buttons: [
-		      { text: 'Mégsem' },
-		      {
-		        text: '<b>Létrehoz</b>',
-		        type: 'button-pink',
-		        onTap: function(e) {	        
-		        
-		          if (!$scope.data.albumName || !$scope.data.albumDate || !$scope.data.albumSex) {
-		         	e.preventDefault();		            
-		            var myPopup = $ionicPopup.show({
-					    title: 'Valamelyik adat hiányzik',
-					    buttons: [
-					      {
-					        text: '<b>újra</b>',
-					        type: 'button-pink',
-					        onTap: function(e) {
-					         
-					        }
-					      },
-					    ]
-					  });
-		          } else {
-		            album = {
-			    		albumName : $scope.data.albumName,
-			    		albumDate : $scope.data.albumDate,
-			    		albumSex  : $scope.data.albumSex
-			    	};
-			    	dao.newAlbum(album,function(){});
-			    	var myPopup = $ionicPopup.show({
-					    title: 'Az albumot elmentettük',
+			 var myPopup = $ionicPopup.show({
+					    title: 'Új album',
+					    template :'Még nem csináltál albumot a gyermekednek, ezt a funkciót a beállitások menüpont alatt éred el',
 					    buttons: [
 					      {
 					        text: '<b>Rendben</b>',
-					        type: 'button-pink',
-					        onTap: function(e) {
-					           dao.findAllAlbum(function(albums) {
-									$scope.albums = albums;
-									$scope.$apply();
-									console.log($scope.albums);
-								});
-					         return;
-					        }
+					        type: 'button-pink'
 					      },
 					    ]
-					  });			    	
-			    	return;
-		          }
-		          
-		        }
-		      },
-		    ]
-		  });
+					  });		
     	
 		} else {
 			var options = {
@@ -375,71 +315,28 @@ angular.module('starter', ['ionic'])
 		return fullDate;
 	}//end current date function
     
-    $scope.newalbum =  function(){
-    	$scope.data = {};
-    	var myPopup = $ionicPopup.show({
-		    template: '<label class="item item-input"><span class="input-label">Név</span><input ng-model="data.albumName" type="text"></label>'+
-		    		  '<label class="item item-input"><span class="input-label">Születésnap</span><input max='+currentDate()+' ng-model="data.albumDate" type="date"></label>'+
-		    		  '<label class="item item-input item-select"><div class="input-label">Nem</div><select ng-model="data.albumSex"><option>Fiú</option><option>Lány</option></select> </label>',		    
-		    title: 'Új album',
-		    subTitle: 'A gyermeked új albumának létrehozásához adj meg néhány adatot',
-		    scope: $scope,
-		    buttons: [
-		      { text: 'Mégsem' },
-		      {
-		        text: '<b>Létrehoz</b>',
-		        type: 'button-pink',
-		        onTap: function(e) {	        
-		        
-		          if (!$scope.data.albumName || !$scope.data.albumDate || !$scope.data.albumSex) {
-		         	e.preventDefault();		            
-		            var myPopup = $ionicPopup.show({
-					    title: 'Valamelyik adat hiányzik',
-					    buttons: [
-					      {
-					        text: '<b>újra</b>',
-					        type: 'button-pink',
-					        onTap: function(e) {
-					         
-					        }
-					      },
-					    ]
-					  });
-		          } else {
-		            album = {
-			    		albumName : $scope.data.albumName,
-			    		albumDate : $scope.data.albumDate,
-			    		albumSex  : $scope.data.albumSex
-			    	};
-			    	dao.newAlbum(album,function(){});
-			    	var myPopup = $ionicPopup.show({
-					    title: 'Az albumot elmentettük',
-					    buttons: [
-					      {
-					        text: '<b>Rendben</b>',
-					        type: 'button-pink',
-					        onTap: function(e) {
-					           dao.findAllAlbum(function(albums) {
-									$scope.albums = albums;
-									$scope.$apply();
-									console.log($scope.albums);
-								});
-					         return;
-					        }
-					      },
-					    ]
-					  });			    	
-			    	return;
-		          }
-		          
-		        }
-		      },
-		    ]
-		  });
-    
-    	
+	
+	
+	$scope.menuRight = function() {
+		$ionicSideMenuDelegate.toggleRight();
+	}; 
+
+
+    $scope.uploadEvent = function(eventID,tombID){
+   	
+		dao.eventById(eventID, function(event) {
+			$scope.eventData = event[0];
+			$scope.eventData.albumOwner = $rootScope.user.email;		
+			
+			$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
+			    dao.eventFeltolt(eventID);
+				$scope.offlineEvents.splice(tombID, 1);		    
+			}).error(function(data, status, headers, config) {
+
+			});
+		}); 
+     
     };
-   
 
 }])
 
@@ -531,78 +428,124 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 		var fullDate = Year + '-' + Month + '-' + Day;
 		return fullDate;
 	}//end current date function
-	
+
 	$ionicModal.fromTemplateUrl('image-modal.html', {
-		scope : $scope,
-		animation : 'slide-in-up'
-	}).then(function(modal) {
-		$scope.modal = modal;
-	});
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
 
-	$scope.openModal = function(eventId) {
-			$scope.aImages = [];	
-			if($scope.events[eventId].eventImg1!='undefined')		
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg1});
-			if($scope.events[eventId].eventImg2!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg2});
-			if($scope.events[eventId].eventImg3!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg3});
-			if($scope.events[eventId].eventImg4!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg4});
-			if($scope.events[eventId].eventImg5!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg5});
-			if($scope.events[eventId].eventImg6!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg6});
-			if($scope.events[eventId].eventImg7!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg7});
-			if($scope.events[eventId].eventImg8!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg8});
-			if($scope.events[eventId].eventImg9!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg9});
-			if($scope.events[eventId].eventImg10!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg10});
-		$scope.modal.show();
-		// Important: This line is needed to update the current ion-slide's width
-		// Try commenting this line, click the button and see what happens
-		$ionicSlideBoxDelegate.update();
-	};
+    $scope.openModal = function() {
+      $scope.modal.show();
+    };
 
-	$scope.closeModal = function() {
-		$scope.modal.hide();
-	};
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    };
 
-	// Cleanup the modal when we're done with it!
-	$scope.$on('$destroy', function() {
-		$scope.modal.remove();
-	});
-	// Execute action on hide modal
-	$scope.$on('modal.hide', function() {
-		// Execute action
-	});
-	// Execute action on remove modal
-	$scope.$on('modal.removed', function() {
-		// Execute action
-	});
-	$scope.$on('modal.shown', function() {
-		console.log('Modal is shown!');
-	});
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+    // Execute action on hide modal
+    $scope.$on('modal.hide', function() {
+      // Execute action
+    });
+    // Execute action on remove modal
+    $scope.$on('modal.removed', function() {
+      // Execute action
+    });
+    $scope.$on('modal.shown', function() {
+      console.log('Modal is shown!');
+    });
 
-	// Call this functions if you need to manually control the slides
-	$scope.next = function() {
-		$ionicSlideBoxDelegate.next();
-	};
+    $scope.showImage = function(imageurl) {      
+      $scope.imageSrc = imageurl;      
+      $scope.openModal();
+    };
 
-	$scope.previous = function() {
-		$ionicSlideBoxDelegate.previous();
-	};
-
-	// Called each time the slide changes
-	$scope.slideChanged = function(index) {
-		$scope.slideIndex = index;
-	};
 
 }])
 
+.controller('newAlbumCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+	$scope.home = function() {
+		$state.go('home');
+	};
+	$scope.data= {};
+	
+	
+	 $('#albumDate').mobiscroll().date({
+        display : 'bottom',
+        mode: 'scroller',
+        dateOrder: 'yy mm dd',
+        dateFormat : "yy-mm-dd",
+		minDate : new Date(1990, 01, 01),
+		maxDate : new Date(currentDate())
+    });  
+	
+	function currentDate() {
+		var currentDate = new Date;
+		var Day = currentDate.getDate();
+		if (Day < 10) {
+			Day = '0' + Day;
+		}//end if
+		var Month = currentDate.getMonth() + 1;
+		if (Month < 10) {
+			Month = '0' + Month;
+		}//end if
+		var Year = currentDate.getFullYear();
+		var fullDate = Year + '-' + Month + '-' + Day;
+		return fullDate;
+	}
+
+	
+	 $scope.newalbum =  function(){
+		
+		
+    	console.log($scope.data);
+    	 if (!$scope.data.albumName || !$scope.data.albumSex || $('#albumDate').val()=='' ) {	            
+		            var myPopup = $ionicPopup.show({
+					    title: 'Valamelyik adat hiányzik',
+					    buttons: [
+					      {
+					        text: '<b>újra</b>',
+					        type: 'button-pink',
+					        onTap: function(e) {
+					         
+					        }
+					      },
+					    ]
+					  });		          				          
+		          } else {
+		            album = {
+			    		albumName : $scope.data.albumName,
+			    		albumDate : $('#albumDate').val(),
+			    		albumSex  : $scope.data.albumSex
+			    	};
+			    	dao.newAlbum(album,function(){});
+			    	var myPopup = $ionicPopup.show({
+					    title: 'Az albumot elmentettük',
+					    buttons: [
+					      {
+					        text: '<b>Rendben</b>',
+					        type: 'button-pink',
+					        onTap: function(e) {
+					           $state.go('home');
+					           return;
+					        }
+					      },
+					    ]
+					  });			    	
+			    	return;
+		          }
+    
+    	
+    };
+	
+
+}])
 
 .controller('timelineCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http','$ionicModal', '$ionicSlideBoxDelegate', 'userService',
 function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlideBoxDelegate, userService) {
@@ -621,77 +564,44 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 		});
 	}); 
 
-
-
-
 	$ionicModal.fromTemplateUrl('image-modal.html', {
-		scope : $scope,
-		animation : 'slide-in-up'
-	}).then(function(modal) {
-		$scope.modal = modal;
-	});
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
 
-	$scope.openModal = function(eventId) {
-			$scope.aImages = [];	
-			if($scope.events[eventId].eventImg1!='undefined')		
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg1});
-			if($scope.events[eventId].eventImg2!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg2});
-			if($scope.events[eventId].eventImg3!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg3});
-			if($scope.events[eventId].eventImg4!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg4});
-			if($scope.events[eventId].eventImg5!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg5});
-			if($scope.events[eventId].eventImg6!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg6});
-			if($scope.events[eventId].eventImg7!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg7});
-			if($scope.events[eventId].eventImg8!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg8});
-			if($scope.events[eventId].eventImg9!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg9});
-			if($scope.events[eventId].eventImg10!='undefined')
-				$scope.aImages.push({'src'  : $scope.events[eventId].eventImg10});
-		$scope.modal.show();
-		// Important: This line is needed to update the current ion-slide's width
-		// Try commenting this line, click the button and see what happens
-		$ionicSlideBoxDelegate.update();
-	};
+    $scope.openModal = function() {
+      $scope.modal.show();
+    };
 
-	$scope.closeModal = function() {
-		$scope.modal.hide();
-	};
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    };
 
-	// Cleanup the modal when we're done with it!
-	$scope.$on('$destroy', function() {
-		$scope.modal.remove();
-	});
-	// Execute action on hide modal
-	$scope.$on('modal.hide', function() {
-		// Execute action
-	});
-	// Execute action on remove modal
-	$scope.$on('modal.removed', function() {
-		// Execute action
-	});
-	$scope.$on('modal.shown', function() {
-		console.log('Modal is shown!');
-	});
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+    // Execute action on hide modal
+    $scope.$on('modal.hide', function() {
+      // Execute action
+    });
+    // Execute action on remove modal
+    $scope.$on('modal.removed', function() {
+      // Execute action
+    });
+    $scope.$on('modal.shown', function() {
+      console.log('Modal is shown!');
+    });
 
-	// Call this functions if you need to manually control the slides
-	$scope.next = function() {
-		$ionicSlideBoxDelegate.next();
-	};
+    $scope.showImage = function(imageurl) {      
+      $scope.imageSrc = imageurl;      
+      $scope.openModal();
+    };
 
-	$scope.previous = function() {
-		$ionicSlideBoxDelegate.previous();
-	};
 
-	// Called each time the slide changes
-	$scope.slideChanged = function(index) {
-		$scope.slideIndex = index;
-	};
+
 
 }])
 
@@ -703,7 +613,7 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 	};
 	
 	$scope.logAjax = function() {
-		$http.post(serverURL + 'ibabylifeserver/login.php?' + jQuery("#form-login").serialize()).success(function(data) {
+		$http.post('http://192.168.1.184/ibabylifeserver/login.php?' + jQuery("#form-login").serialize()).success(function(data) {
 			console.log(data);
 
 			if (!data.success) {
@@ -754,7 +664,7 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 	};
 	
 	$scope.regAjax = function() {
-		$http.post(serverURL + 'ibabylifeserver/signup.php?' + jQuery("#form-signup").serialize()).success(function(data) {
+		$http.post('http://192.168.1.184/ibabylifeserver/signup.php?' + jQuery("#form-signup").serialize()).success(function(data) {
 			console.log(data);
 
 			if (!data.success) {
@@ -1087,9 +997,10 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 					if(online(facebookonline)){
 						hello('facebook').api('me', function(json) {
 							
-							console.log(json);
-							$rootScope.user = json;
-							$rootScope.$apply($rootScope.user);
+							$rootScope.user = {
+								name : localStorage.getItem('username'),
+								email : localStorage.getItem('email')
+							};
 							$rootScope.userStatus = true;
 							$rootScope.network = 'facebook';
 							$ionicLoading.hide();
@@ -1099,10 +1010,10 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 					if(online(googleonline)){
 						hello('google').api('me', function(json) {
 							
-							console.log(json);
-							$rootScope.user = json;
-							$rootScope.$apply($rootScope.user);
-							$rootScope.userStatus = true;
+							$rootScope.user = {
+								name : localStorage.getItem('username'),
+								email : localStorage.getItem('email')
+							};
 							$rootScope.network = 'google';
 							$ionicLoading.hide();
 							$state.go('home');
@@ -1111,11 +1022,10 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 					if(online(twitteronline)){
 						hello('twitter').api('me', function(json) {
 							
-							console.log(json);
-							$rootScope.user = json;
-							$rootScope.$apply($rootScope.user);
-							$rootScope.userStatus = true;
-							$rootScope.network = 'twitter';
+							$rootScope.user = {
+								name : localStorage.getItem('username'),
+								email : localStorage.getItem('email')
+							};
 							$ionicLoading.hide();
 							$state.go('home');
 						});				                 
@@ -1165,18 +1075,11 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 		  });
 	  }else{
       	  var myPopup = $ionicPopup.show({
-			    template: 'Két lehetőséged van',
+			    template: 'Ellenőrizze az internetkapcsolatot, és próbáljon meg újra bejelentkezni',
 			    title: 'Nincs internetkapcsolatod !',
 			    buttons: [
-			      { text: '<b>Továbblépés offline módban</b>',	      
-			        type: 'button-light',
-			        onTap: function(e) {
-			          $rootScope.guest = true;
-	  				  $state.go('home'); 
-			        }
-			      },
 			      {
-			        text: '<b>Megpróbálok újra csatlakozni</b>',
+			        text: '<b>Rendben</b>',
 			        type: 'button-pink',
 			        onTap: function(e) {
 			        }

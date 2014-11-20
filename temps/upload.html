@@ -42,7 +42,7 @@
 			</form>
 		</div>
 
-		<button  ng-if='!mentve'  class="button button-block button-light icon ion-plus-round" ng-click="plusz1Image()">
+		<button  ng-if='!mentve && images.length < 10'   class="button button-block button-light icon ion-plus-round" ng-click="plusz1Image()">
 			1 kép
 		</button>
 		<button  ng-if='!mentve'  class="button button-block button-light icon ion-bookmark" ng-click="saveEvent()">

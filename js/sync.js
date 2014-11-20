@@ -34,7 +34,7 @@ window.dao = {
 	
 	createEventsTable : function() {
 		this.db.transaction(function(tx) {
-			var sql = "CREATE TABLE IF NOT EXISTS events ( id INTEGER PRIMARY KEY AUTOINCREMENT, albumId int, eventMessage VARCHAR(50), eventMilestone VARCHAR(50),eventImg1 char, eventImg2 char,eventImg3 char,eventImg4 char,eventImg5 char,eventImg6 char,eventImg7 char,eventImg8 char,eventImg9 char,eventImg10 char, eventDate datetime)";
+			var sql = "CREATE TABLE IF NOT EXISTS events ( id INTEGER PRIMARY KEY AUTOINCREMENT,feltoltve int DEFAULT 0, albumId int, eventMessage VARCHAR(50), eventMilestone VARCHAR(50),eventImg1 char, eventImg2 char,eventImg3 char,eventImg4 char,eventImg5 char,eventImg6 char,eventImg7 char,eventImg8 char,eventImg9 char,eventImg10 char, eventDate datetime)";
 			tx.executeSql(sql);
 		}, this.txErrorHandler, function() {
 			console.log('EVents tábla sikeresen elkészitve !!');
@@ -50,6 +50,23 @@ window.dao = {
 			console.log('Albums tábla sikeresen elkészitve !!');
 
 		});
+	},
+	
+	getOfflineEvent : function(callback){
+		this.db.transaction(function(tx) {
+			var sql = "SELECT  * FROM events where feltoltve = 0  order by eventDate desc ";
+			console.log('SQLlite lekérdezés : offline események');
+			tx.executeSql(sql, this.txErrorHandler, function(tx, results) {
+
+				var len = results.rows.length, events = [], i = 0;
+				for (; i < len; i = i + 1) {
+					events[i] = results.rows.item(i);
+
+				}
+				console.log(len + 'offline esemény találat');
+				callback(events);
+			});
+		});	
 	},
 	
 	getAllEvent : function(callback) {
@@ -96,6 +113,19 @@ window.dao = {
 					event[i] = results.rows.item(i);
 				}
 				callback(event);	
+			});
+		}, this.txErrorHandler, function(tx) {
+			
+		});
+	},
+	eventFeltolt : function(eventID) {
+		this.db.transaction(function(tx) {
+			var sql = "UPDATE events SET feltoltve=1 WHERE id = " + eventID;
+			tx.executeSql(sql, this.txErrorHandler, function(tx, results) {
+				var len = results.rows.length, event = [], i = 0;
+				for (; i < len; i = i + 1) {
+					event[i] = results.rows.item(i);
+				}					
 			});
 		}, this.txErrorHandler, function(tx) {
 			

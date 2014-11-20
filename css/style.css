@@ -6,7 +6,6 @@
 	background-size: cover;
 }
 
-
 /*
  logo css
  */
@@ -23,8 +22,8 @@
  */
 
 .button.button-pink {
-    background-color: #F521A2;
-    color: #fff;
+	background-color: #F521A2;
+	color: #fff;
 }
 .wide-as-needed {
 	overflow: scroll;
@@ -69,7 +68,7 @@
 
 .album {
 	width: 90px;
-	height: 70px;
+	height: 40px;
 	padding: 0px;
 }
 .thumb {
@@ -124,6 +123,8 @@
 	border-width: 1px;
 }
 
+/* image nagyitás */
+
 .transparent {
 	background: transparent !important;
 }
@@ -144,18 +145,6 @@
 	right: 0;
 	top: 0;
 }
-.slider {
-	width: 100%;
-	height: 100%;
-}
 
-p.info {
-	position: absolute;
-	bottom: 55px;
-	margin: 0 auto;
-	width: 100%;
-	display: block;
-	text-align: center;
-	font-size: 28px;
-	color: #ffffff;
-}
+/*corner ribbon */
+

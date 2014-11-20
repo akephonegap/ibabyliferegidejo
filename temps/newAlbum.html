@@ -1,0 +1,25 @@
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="home()"></button>
+	</div>
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+</ion-header-bar>
+<ion-content style="padding: 10px">
+
+	<label class="item item-input"><span class="input-label">Név</span>
+		<input ng-model="data.albumName" type="text">
+	</label>
+	<label class="item item-input"><span  class="input-label">Születésnap</span>
+		<input type="text" id="albumDate" ng-model="data.albumDate"  class="i-txt" />
+	</label>
+	<label class="item item-input item-select">
+		<div class="input-label">
+			Nem
+		</div>
+		<select ng-model="data.albumSex">
+			<option>Fiú</option><option>Lány</option>
+		</select> </label>	
+	<button  class="button button-block button-light icon ion-plus-round" data-ng-click="newalbum()">
+		Létrehoz
+	</button>
+</ion-content>

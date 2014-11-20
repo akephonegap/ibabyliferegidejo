@@ -10,7 +10,7 @@
 			<div style="margin-bottom: 5px" class="list card">
 
 				<div class="item item-avatar">
-					<img ng-click="openModal($index)" src="{{event.eventImg1}}">
+					<img ng-click="showImage(event.eventImg1)" src="{{event.eventImg1}}">
 					<h3>{{albums[event.albumId-1].albumName}}</h3>
 					<p>
 						<z ng-if="event.eventMilestone!='undefined'">
@@ -24,16 +24,16 @@
 
 				<div class="item item-body">
 					<ion-scroll direction="x" id="kepek"  class="wide-as-needed" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg1!='undefined'" class="eventImgs thumb button" id="kep" style=" background-image: url('{{event.eventImg1}}')"   >
-						<img ng-click="openModal($index)" ng-if="event.eventImg2!='undefined'" class="eventImgs thumb button" id="kep" style=" background-image: url('{{event.eventImg2}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg3!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg3}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg4!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg4}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg5!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg5}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg6!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg6}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg7!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg7}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg8!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg8}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg9!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg9}}')" >
-						<img ng-click="openModal($index)" ng-if="event.eventImg10!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg10}}')" >
+						<img ng-click="showImage(event.eventImg1)" ng-if="event.eventImg1!='undefined'" class="eventImgs thumb button" id="kep" style=" background-image: url('{{event.eventImg1}}')"   >
+						<img ng-click="showImage(event.eventImg2)" ng-if="event.eventImg2!='undefined'" class="eventImgs thumb button" id="kep" style=" background-image: url('{{event.eventImg2}}')" >
+						<img ng-click="showImage(event.eventImg3)" ng-if="event.eventImg3!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg3}}')" >
+						<img ng-click="showImage(event.eventImg4)" ng-if="event.eventImg4!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg4}}')" >
+						<img ng-click="showImage(event.eventImg5)" ng-if="event.eventImg5!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg5}}')" >
+						<img ng-click="showImage(event.eventImg6)" ng-if="event.eventImg6!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg6}}')" >
+						<img ng-click="showImage(event.eventImg7)" ng-if="event.eventImg7!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg7}}')" >
+						<img ng-click="showImage(event.eventImg8)" ng-if="event.eventImg8!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg8}}')" >
+						<img ng-click="showImage(event.eventImg9)" ng-if="event.eventImg9!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg9}}')" >
+						<img ng-click="showImage(event.eventImg10)" ng-if="event.eventImg10!='undefined'" class="eventImgs thumb button" id="kep"  style=" background-image: url('{{event.eventImg10}}')" >
 
 					</ion-scroll>
 
@@ -44,18 +44,13 @@
 
 			</div>
 		</ion-item>
-		
+
 	</ion-list>
 	<script id="image-modal.html" type="text/ng-template">
-		<div class="modal image-modal transparent"
-		ng-click="closeModal()">
-		<ion-slide-box on-slide-changed="slideChanged(index)"
-		show-pager="false">
-		<ion-slide ng-repeat="oImage in aImages">
-		<img ng-src="{{oImage.src}}" class="fullscreen-image" />
-		<p class="info">{{oImage.msg}}</p>
-		</ion-slide>
-		</ion-slide-box>
+		<div class="modal image-modal transparent" ng-click="closeModal()">
+		<ion-pane class="transparent">
+		<img ng-src="{{imageSrc}}" class="fullscreen-image"/>
+		</ion-pane>
 		</div>
 	</script>
 
