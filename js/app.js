@@ -320,12 +320,7 @@ angular.module('starter', ['ionic'])
 	
 	
 	$scope.menuRight = function() {
-		$ionicSideMenuDelegate.toggleRight();
-		$http.post('http://mobilapps.fekiwebstudio.hu/ibabylife/ping.php', {}).success(function(data, status, headers, config) {
-			alert(data);
-		}).error(function(data, status, headers, config) {
-			alert('nem érni el');
-		});
+		$ionicSideMenuDelegate.toggleRight();		
 	}; 
 
 	
@@ -346,11 +341,11 @@ angular.module('starter', ['ionic'])
 				$scope.eventData.albumName = $scope.album[0].albumName;
 				$scope.eventData.albumDate = $scope.album[0].albumDate;
 
-				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
+				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {					
 					dao.eventFeltolt(eventID);
-					$scope.offlineEvents.splice(tombID, 1);
+					$scope.offlineEvents.splice(tombID, 1);					
 				}).error(function(data, status, headers, config) {
-
+					alert('Nincs kapcsolat a szerverrel');	
 				});
 
 			});
@@ -635,7 +630,7 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 	};
 	
 	$scope.logAjax = function() {
-		$http.post('http://192.168.1.184/ibabylifeserver/login.php?' + jQuery("#form-login").serialize()).success(function(data) {
+		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/login.php?' + jQuery("#form-login").serialize()).success(function(data) {
 			console.log(data);
 
 			if (!data.success) {
@@ -686,7 +681,7 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 	};
 	
 	$scope.regAjax = function() {
-		$http.post('http://192.168.1.184/ibabylifeserver/signup.php?' + jQuery("#form-signup").serialize()).success(function(data) {
+		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/signup.php?' + jQuery("#form-signup").serialize()).success(function(data) {
 			console.log(data);
 
 			if (!data.success) {
