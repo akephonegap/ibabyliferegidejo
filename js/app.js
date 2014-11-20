@@ -150,7 +150,7 @@ angular.module('starter', ['ionic'])
 	          $rootScope.userStatus = true;
 	          $rootScope.network = 'google';
 	          window.localStorage.setItem("username", $rootScope.user.name );
-			  window.localStorage.setItem("email", $rootScope.user.email);	    
+			  window.localStorage.setItem("email",  $rootScope.user.email);	    
 	          $state.go('home');
 	        });
 	      });
@@ -184,6 +184,7 @@ angular.module('starter', ['ionic'])
 	        hello( 'twitter' ).api( '/me' ).success(function(json) {
 	          console.log(json);
 	          $rootScope.user = json;
+	          $rootScope.user.email = $rootScope.user.screen_name+'@ibabylife.com';
 	          $rootScope.$apply($rootScope.user);
 	          $rootScope.userStatus = true;
 	          $rootScope.network = 'twitter';
@@ -255,20 +256,20 @@ angular.module('starter', ['ionic'])
 	});
 	
 
-    $scope.takePic = function() {
-     	
-		if ($scope.albums.length==0) {
-			 var myPopup = $ionicPopup.show({
-					    title: 'Új album',
-					    template :'Még nem csináltál albumot a gyermekednek, ezt a funkciót a beállitások menüpont alatt éred el',
-					    buttons: [
-					      {
-					        text: '<b>Rendben</b>',
-					        type: 'button-pink'
-					      },
-					    ]
-					  });		
-    	
+    $scope.takePic = function() {	
+		if ($scope.albums.length == 0) {
+			var myPopup = $ionicPopup.show({
+				title : 'Új album',
+				template : 'Még nem csináltál albumot a gyermekednek, ezt a funkciót a beállitások menüpont alatt éred el',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-pink',
+					onTap : function(e) {
+						$ionicSideMenuDelegate.toggleRight();
+					}
+				}]
+			});
+
 		} else {
 			var options = {
 				quality : 50,
@@ -282,6 +283,7 @@ angular.module('starter', ['ionic'])
 			// Take picture using device camera and retrieve image as base64-encoded string
 			navigator.camera.getPicture(onSuccess, onFail, options);
 		}
+
      
        
     };
@@ -319,24 +321,44 @@ angular.module('starter', ['ionic'])
 	
 	$scope.menuRight = function() {
 		$ionicSideMenuDelegate.toggleRight();
+		$http.post('http://mobilapps.fekiwebstudio.hu/ibabylife/ping.php', {}).success(function(data, status, headers, config) {
+			alert(data);
+		}).error(function(data, status, headers, config) {
+			alert('nem érni el');
+		});
 	}; 
 
+	
+	
+		
+	
 
-    $scope.uploadEvent = function(eventID,tombID){
-   	
+   
+	$scope.uploadEvent = function(eventID, tombID) {
+
 		dao.eventById(eventID, function(event) {
 			$scope.eventData = event[0];
-			$scope.eventData.albumOwner = $rootScope.user.email;		
-			
-			$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
-			    dao.eventFeltolt(eventID);
-				$scope.offlineEvents.splice(tombID, 1);		    
-			}).error(function(data, status, headers, config) {
+			$scope.eventData.albumOwner = $rootScope.user.email;
+			console.log($scope.eventData);
+
+			dao.findAlbumByID($scope.eventData.albumId, function(album) {
+				$scope.album = album;
+				$scope.eventData.albumName = $scope.album[0].albumName;
+				$scope.eventData.albumDate = $scope.album[0].albumDate;
+
+				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
+					dao.eventFeltolt(eventID);
+					$scope.offlineEvents.splice(tombID, 1);
+				}).error(function(data, status, headers, config) {
+
+				});
 
 			});
-		}); 
-     
-    };
+
+		});
+
+	}; 
+
 
 }])
 
@@ -992,46 +1014,16 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 				  });
 				
 			} else {
+				
 				if (online(facebookonline) || online(googleonline) || online(twitteronline)) {
-					
-					if(online(facebookonline)){
-						hello('facebook').api('me', function(json) {
-							
-							$rootScope.user = {
-								name : localStorage.getItem('username'),
-								email : localStorage.getItem('email')
-							};
-							$rootScope.userStatus = true;
-							$rootScope.network = 'facebook';
-							$ionicLoading.hide();
-							$state.go('home');
-						});				                 
-					}
-					if(online(googleonline)){
-						hello('google').api('me', function(json) {
-							
-							$rootScope.user = {
-								name : localStorage.getItem('username'),
-								email : localStorage.getItem('email')
-							};
-							$rootScope.network = 'google';
-							$ionicLoading.hide();
-							$state.go('home');
-						});				                 
-					}
-					if(online(twitteronline)){
-						hello('twitter').api('me', function(json) {
-							
-							$rootScope.user = {
-								name : localStorage.getItem('username'),
-								email : localStorage.getItem('email')
-							};
-							$ionicLoading.hide();
-							$state.go('home');
-						});				                 
-					}
-						   
-	
+
+					$rootScope.user = {
+						name : localStorage.getItem('username'),
+						email : localStorage.getItem('email')
+					};
+					$ionicLoading.hide();
+					$state.go('home');
+
 				} else if (loginIBabyLife()) {
 					$rootScope.user = {
 						name : localStorage.getItem('ibabylifeusername'),
@@ -1040,7 +1032,8 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 					$rootScope.$apply($rootScope.user);
 					$ionicLoading.hide();
 					$state.go('home');
-				}				
+				}
+		
 			}
 	
 		} else {
