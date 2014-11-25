@@ -50,7 +50,7 @@
 				</button>
 			</ion-scroll>
 
-			<a ng-if="offlineEvents.length>0" class="item item-icon-left" > <i class="icon ion-looping"></i> Feltöltése vár <span class="badge badge-assertive">{{offlineEvents.length}}</span> </a>
+			<a ng-if="offlineEvents.length>0" class="item item-icon-left" > <i class="icon ion-shuffle"></i> Feltöltése vár <span class="badge badge-assertive">{{offlineEvents.length}}</span> </a>
 
 			<div class="list" style="padding: 15px">
 				<a class="item item-icon-left item-icon-right" ng-click="uploadEvent(event.id,$index)" ng-repeat="event in offlineEvents"> <i class="icon ion-upload"></i> {{albums[event.albumId-1].albumName}}<span class="item-note">{{event.eventDate}}</span></a>

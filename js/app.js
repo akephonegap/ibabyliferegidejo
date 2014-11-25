@@ -332,7 +332,7 @@ angular.module('starter', ['ionic'])
 	$scope.uploadEvent = function(eventID, tombID) {
 
 		dao.eventById(eventID, function(event) {
-			$scope.eventData = event[0];
+			$scope.eventData = event[0];			
 			$scope.eventData.albumOwner = $rootScope.user.email;
 			console.log($scope.eventData);
 
@@ -340,13 +340,18 @@ angular.module('starter', ['ionic'])
 				$scope.album = album;
 				$scope.eventData.albumName = $scope.album[0].albumName;
 				$scope.eventData.albumDate = $scope.album[0].albumDate;
-
+				
+				
+				
 				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {					
+					
 					dao.eventFeltolt(eventID);
-					$scope.offlineEvents.splice(tombID, 1);					
+					$scope.offlineEvents.splice(tombID, 1);		
+								
 				}).error(function(data, status, headers, config) {
 					alert('Nincs kapcsolat a szerverrel');	
 				});
+				
 
 			});
 
