@@ -229,7 +229,12 @@ angular.module('starter', ['ionic'])
 
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		cordova.plugins.notification.badge.set($scope.offlineEvents.length);
+		if($scope.offlineEvents.length==0){
+			cordova.plugins.notification.badge.clear();
+		}else{
+			cordova.plugins.notification.badge.set($scope.offlineEvents.length);
+		}
+		
 	}); 
 
 	
@@ -352,12 +357,17 @@ angular.module('starter', ['ionic'])
 				
 				
 				
-				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {					
+				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
+					
 					$ionicLoading.hide();
 					dao.eventFeltolt(eventID);
 					$scope.offlineEvents.splice(tombID, 1);
-					cordova.plugins.notification.badge.set($scope.offlineEvents.length);	
-						
+					
+					if ($scope.offlineEvents.length == 0) {
+						cordova.plugins.notification.badge.clear();
+					} else {
+						cordova.plugins.notification.badge.set($scope.offlineEvents.length);
+					}						
 								
 				}).error(function(data, status, headers, config) {
 					alert('Nincs kapcsolat a szerverrel');	
