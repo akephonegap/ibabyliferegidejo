@@ -63,6 +63,11 @@ angular.module('starter', ['ionic'])
       templateUrl: 'temps/albumline.html',
       controller: 'albumlineCtrl'
     })
+    .state('fotoalbum', {
+      url: '/fotoalbum',
+      templateUrl: 'temps/fotoalbum.html',
+      controller: 'fotoalbumCtrl'
+    })
 	.state('login', {
 		url : '/login',
 		templateUrl : 'temps/login.html',
@@ -224,35 +229,138 @@ angular.module('starter', ['ionic'])
 .controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicSideMenuDelegate','$ionicLoading','$http','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicSideMenuDelegate,$ionicLoading,$http, userService) {
     $scope.data = {};  
 	
+	
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });	
-
-
+	
+	
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		if($scope.offlineEvents.length==0){
-			cordova.plugins.notification.badge.clear();
-		}else{
-			cordova.plugins.notification.badge.set($scope.offlineEvents.length);
-		}
 		
-	}); 
+		 if ($scope.offlineEvents.length == 0) {
+		 cordova.plugins.notification.badge.clear();
+		 } else {
+		 cordova.plugins.notification.badge.set($scope.offlineEvents.length);
+		 }
+		 
 
-	
+	});
+
+
+	$scope.feedback = function(){
+		 var myPopup = $ionicPopup.show({
+		    template: '<input type="text" ng-model="data.feedback">',
+		    title: 'Segítsd munkánkat',
+		    subTitle: 'Kérlek, írj pár mondatot arról, hogy milyennek találod az alkalmazást. Ha van valami, amit hiányolsz, azt is nyugodtan írd ide. Köszönjük !',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Mégsem' },
+		      {
+		        text: '<b>Küldés</b>',
+		        type: 'button-pink',
+		        onTap: function(e) {
+		          if (!$scope.data.feedback) {
+		            //don't allow the user to close unless he enters wifi password
+		            e.preventDefault();
+		          } else {
+		          	  $scope.feedbackData = {};
+		          	  $scope.feedbackData.message = $scope.data.feedback;
+		          	  $scope.feedbackData.deviceModel = device.model;
+		          	  $scope.feedbackData.devicePlatform = device.platform;
+		          	  $scope.feedbackData.deviceVersion = device.version;
+		          	  
+		          	  
+		          	  
+			          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
+														
+						}).error(function(data, status, headers, config) {
+							alert('Nincs kapcsolat a szerverrel');	
+						});
+		               
+		          }
+		        }
+		      },
+		    ]
+		  });
+		
+	};
 	
 	$scope.albumline = function(albumid){
 		$rootScope.albumid = albumid;
 		$state.go('albumline');
 	};
-	$scope.filter = function() {		 
-		$state.go('filter');
-	};
+	
 	$scope.newalbum = function() {		 
 		$state.go('newAlbum');
 	};
 	
-	$scope.timeline = function(){
-		$state.go('timeline');
-	};
+	dao.findAllAlbum(function(albums) {
+		$scope.albums = albums;
+		$scope.data.album = $scope.albums[0];
+		$scope.$apply();
+	});
+	
+	$scope.fotoalbum = function() {
+		if ($scope.albums.length == 0) {
+			var myPopup = $ionicPopup.show({
+				title : 'Új album',
+				template : 'Még nem csináltál albumot a gyermekednek, ezt a funkciót a beállitások menüpont alatt éred el',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-pink',
+					onTap : function(e) {
+						$ionicSideMenuDelegate.toggleRight();
+					}
+				}]
+			});
+
+		} else {
+			 var myPopup = $ionicPopup.show({
+			    template: '<label class="item item-input item-select"><div class="input-label">	Melyik album </div> <select ng-model="data.fotoalbum" ng-options="album.albumName for album in albums"></select></label>',
+			    title: 'Fotóalbum készítés',
+			    subTitle: 'Kérlek válaszd ki, melyik albumból szeretnél fotóalbumot készíteni.',
+			    scope: $scope,
+			    buttons: [
+			      { text: 'Mégsem' },
+			      {
+			        text: '<b>Tovább</b>',
+			        type: 'button-pink',
+			        onTap: function(e) {
+			          if (!$scope.data.fotoalbum) {
+			            //don't allow the user to close unless he enters wifi password
+			            e.preventDefault();
+			          } else {
+			        	$rootScope.fotoalbum = $scope.data.fotoalbum;
+			          	$state.go('fotoalbum');
+			          }
+			        }
+			      },
+			    ]
+			  });
+			
+		}
+	}; 
+
+	
+
+	$scope.timeline = function() {
+		if ($scope.albums.length == 0) {
+			var myPopup = $ionicPopup.show({
+				title : 'Új album',
+				template : 'Még nem csináltál albumot a gyermekednek, ezt a funkciót a beállitások menüpont alatt éred el',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-pink',
+					onTap : function(e) {
+						$ionicSideMenuDelegate.toggleRight();
+					}
+				}]
+			});
+
+		} else {
+			$state.go('timeline');
+		}
+	}; 
+
 	
 	$scope.logoutGuest=function(){
 		$state.go('login');
@@ -368,7 +476,7 @@ angular.module('starter', ['ionic'])
 					} else {
 						cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 					}						
-								
+						
 				}).error(function(data, status, headers, config) {
 					alert('Nincs kapcsolat a szerverrel');	
 				});
@@ -582,7 +690,28 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 	
 
 }])
+.controller('fotoalbumCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+	$scope.home = function() {
+		$state.go('home');
+	};
+	$scope.fotoalbum= $rootScope.fotoalbum;
+	console.log($scope.fotoalbum);	
 
+	$('.date').mobiscroll().date({
+        display : 'bottom',
+        mode: 'scroller',
+        dateOrder: 'yy mm dd',
+        dateFormat : "yy-mm-dd",
+		minDate : new Date(1990, 01, 01),
+		maxDate : new Date(),
+		
+    });   
+   
+    
+	
+
+}])
 .controller('timelineCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http','$ionicModal', '$ionicSlideBoxDelegate', 'userService',
 function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlideBoxDelegate, userService) {
 	$scope.home = function() {

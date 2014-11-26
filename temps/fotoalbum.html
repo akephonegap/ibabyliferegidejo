@@ -1,0 +1,24 @@
+<ion-header-bar align-title="center" style="background-color: #F521A2 ">
+	<div class="buttons">
+		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="home()">
+			Vissza
+		</button>
+	</div>
+	<h1 style="color: white"  class="title">IBabyLife</h1>
+</ion-header-bar>
+<ion-content style="padding: 10px">
+
+	<button class="button button-block button-pink">
+		{{fotoalbum.albumName}} fotóalbuma
+	</button>
+	<label class="item item-input"><span  class="input-label">Mettől ?</span>
+		<input type="text" id="albumFromDate"  ng-model="data.albumFromDate"  class="date i-txt" />
+	</label>
+	<label class="item item-input"><span  class="input-label">Meddig ?</span>
+		<input type="text" id="albumToDate" ng-model="data.albumFromDate"  class="date i-txt" />
+	</label>
+
+	<button  class="button button-block button-light icon ion-ios7-compose-outline" data-ng-click="newalbum()">
+		Fotóalbum elkészítése
+	</button>
+</ion-content>

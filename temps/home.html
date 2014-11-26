@@ -1,11 +1,10 @@
 <style>
 	.mainMenu {
-		position: fixed;
-		width: 100%;
-		padding: 20px;
-		bottom: 30px;
+		position:fixed;
+		width:100%;
+		padding:20px;
+		bottom:30px;
 	}
-
 </style>
 
 <ion-side-menus>
@@ -28,9 +27,20 @@
 			<button  class="button button-block button-light icon ion-clock" data-ng-click="timeline()">
 				Idővonal
 			</button>
+			<button  class="button button-block button-light icon ion-android-book" data-ng-click="fotoalbum()">
+				Fotóalbum készítés
+			</button>
 
 		</div>
-
+		<ion-footer-bar class="transparent" >
+			
+			<h1 class="title"></h1>
+			<div class="buttons transparent" ng-click="feedback()">
+				<button class="button button-icon icon-right transparent icon ion-android-hand">
+					Segíts 
+				</button>
+			</div>
+		</ion-footer-bar>
 	</ion-side-menu-content>
 
 	<!-- Right menu -->
