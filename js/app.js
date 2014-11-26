@@ -79,7 +79,7 @@ angular.module('starter', ['ionic'])
 
     
   // Send to login if the URL was not found
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/login');
 })
 
 .factory('userService', ['$rootScope','$ionicPopup', '$state', function($rootScope,$ionicPopup, $state) {
