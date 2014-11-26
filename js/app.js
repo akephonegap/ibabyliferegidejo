@@ -223,6 +223,9 @@ angular.module('starter', ['ionic'])
 
 .controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicSideMenuDelegate','$ionicLoading','$http','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicSideMenuDelegate,$ionicLoading,$http, userService) {
     $scope.data = {};  
+	
+	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });	
+
 
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
