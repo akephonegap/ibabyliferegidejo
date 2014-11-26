@@ -42,7 +42,7 @@
 			{{user.email}} </a>
 
 			<a  class="item item-icon-left" ng-click="newalbum()"> <i class="icon ion-ios7-albums"></i> Új album</a>
-			<ion-scroll  direction="x" id="kepek"  class="wide-as-needed" >
+			<ion-scroll  direction="x" id="kepek" style="padding: 10px 0px" class="wide-as-needed" >
 				<button ng-click="albumline({{album.id}})" class="item item-thumbnail-left album button" ng-repeat='album in albums'>
 					<p>
 						{{album.albumName}}

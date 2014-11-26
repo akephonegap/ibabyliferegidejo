@@ -8,7 +8,8 @@
 		<link href="css/style.css" rel="stylesheet">
 
 		<script>
-			
+			cordova.plugins.notification.badge.set(10);
+
 			function checkConnection() {
 				var networkState = navigator.network.connection.type;
 

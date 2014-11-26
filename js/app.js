@@ -276,6 +276,7 @@ angular.module('starter', ['ionic'])
 				targetWidth : 1024,
 				targetHeight : 768,
 				destinationType : Camera.DestinationType.DATA_URL,
+				saveToPhotoAlbum: true,
 				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 				encodingType : 0,
 				correctOrientation : true
@@ -331,6 +332,10 @@ angular.module('starter', ['ionic'])
    
 	$scope.uploadEvent = function(eventID, tombID) {
 
+		$ionicLoading.show({
+			template : '<i class="icon ion-looping"></i> Feltöltés a szerverre...'
+		}); 
+
 		dao.eventById(eventID, function(event) {
 			$scope.eventData = event[0];			
 			$scope.eventData.albumOwner = $rootScope.user.email;
@@ -344,9 +349,10 @@ angular.module('starter', ['ionic'])
 				
 				
 				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {					
-					
+					$ionicLoading.hide();
 					dao.eventFeltolt(eventID);
-					$scope.offlineEvents.splice(tombID, 1);		
+					$scope.offlineEvents.splice(tombID, 1);	
+						
 								
 				}).error(function(data, status, headers, config) {
 					alert('Nincs kapcsolat a szerverrel');	
@@ -372,7 +378,7 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 	
 	
 	$scope.mikorTortent = function(eventDate) {
-		var date1 = new Date($scope.album[0].albumDate+' 23:59:59');
+		var date1 = new Date($scope.album[0].albumDate);
 		var date2 = new Date(eventDate);
 		var timeDiff = Math.abs(date2.getTime() - date1.getTime());
 		var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
@@ -397,21 +403,24 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 			$scope.events = events;
 	
 			var date1 = new Date($scope.album[0].albumDate);
-			var date2 = new Date(currentDate());
+			var date2 = new Date();
 			var timeDiff = Math.abs(date2.getTime() - date1.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 	
 			if (diffDays >= 365) {
-				$scope.kor = parseInt(diffDays / 365) + ' éves ';
-	
+				$scope.kor = parseInt(diffDays / 365) + ' éves ';	
 			} else if (diffDays < 365 && diffDays > 30) {
 				$scope.kor = parseInt(diffDays / 30) + ' hónapos ';
-			} else {
+			} else if(Math.ceil(timeDiff / (1000 * 3600))<24) {
+				$scope.kor = Math.ceil(timeDiff / (1000 * 3600)) +  ' órás';
+			}else{
 				$scope.kor = diffDays + ' napos';
 			}
-	
-			console.log($scope.events);
-			console.log($scope.album);
+			
+			console.log(date1);
+			console.log(date2);
+			console.log();
+			console.log($scope.kor);
 			$scope.$apply();
 		});
 	}); 
@@ -498,30 +507,20 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 	$scope.data= {};
 	
 	
-	 $('#albumDate').mobiscroll().date({
+	 $('#albumDate').mobiscroll().datetime({
         display : 'bottom',
         mode: 'scroller',
         dateOrder: 'yy mm dd',
         dateFormat : "yy-mm-dd",
+        timeFormat: 'HH:ii:ss',
+        timeWheels: 'HHii',
+        hourText: 'Óra',
+        minuteText: 'Perc',
 		minDate : new Date(1990, 01, 01),
-		maxDate : new Date(currentDate())
+		maxDate : new Date(),
+		
     });  
 	
-	function currentDate() {
-		var currentDate = new Date;
-		var Day = currentDate.getDate();
-		if (Day < 10) {
-			Day = '0' + Day;
-		}//end if
-		var Month = currentDate.getMonth() + 1;
-		if (Month < 10) {
-			Month = '0' + Month;
-		}//end if
-		var Year = currentDate.getFullYear();
-		var fullDate = Year + '-' + Month + '-' + Day;
-		return fullDate;
-	}
-
 	
 	 $scope.newalbum =  function(){
 		
@@ -823,6 +822,7 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 			targetWidth : 1024,
 			targetHeight : 768,
 			destinationType : Camera.DestinationType.DATA_URL,
+			saveToPhotoAlbum: true, 
 			sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 			encodingType : 0,
 			correctOrientation : true

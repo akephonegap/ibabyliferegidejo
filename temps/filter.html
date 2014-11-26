@@ -3,7 +3,7 @@
 		padding: auto auto;
 	}
 	.kepDiv img {
-		width : 100%;
+		width: 100%;
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -18,21 +18,44 @@
 		max-width: 500px;
 		margin: 0 auto;
 	}
+	.filterTitle {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 90px;
+		width: 100%;
+		margin: 0 auto;
+		border: none;
+	}
+	.filterTitle a {
+		color: #FFFFFF;
+	}
+
 </style>
 
 <ion-header-bar align-title="center" style="background-color: #F521A2 ">
 	<div class="buttons">
-		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+		<button style="color: white" class="button button-icon icon-left  ion-arrow-left-c" ng-click="back()">
+			Vissza 
+		</button>
 	</div>
 	<h1 style="color: white"  class="title">IBabyLife</h1>
 	<div class="buttons">
-		<button style="color: white" class="button button-icon icon ion-arrow-right-c" ng-click="cont()"></button>
+		<button style="color: white" class="button button-icon  icon-right ion-arrow-right-c" ng-click="cont()">
+			Tovább
+		</button>
 	</div>
 </ion-header-bar>
 
 <div class="kepDiv card" >
 	<img  id="originalPhoto" class="card" />
 </div>
+<button class="button filterTitle button-block button-light transparent" >
+
+	<a class="item-icon-left item-icon-right" > <i class="icon ion-arrow-left-c"></i> Válassz szűrőt <i class="icon ion-arrow-right-c"></i> </a>
+
+</button>
+
 <ion-scroll direction="x" class="wide-as-needed filterDiv card">
 	<section id="filterButtons">
 
