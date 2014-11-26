@@ -476,7 +476,7 @@ angular.module('starter', ['ionic'])
 					} else {
 						cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 					}						
-						
+					
 				}).error(function(data, status, headers, config) {
 					alert('Nincs kapcsolat a szerverrel');	
 				});
