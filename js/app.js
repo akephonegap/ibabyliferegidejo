@@ -230,7 +230,8 @@ angular.module('starter', ['ionic'])
     $scope.data = {};  
 	
 	
-	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });	
+	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
+	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
 	
 	
 	dao.getOfflineEvent(function(events) {
@@ -390,8 +391,6 @@ angular.module('starter', ['ionic'])
 		} else {
 			var options = {
 				quality : 50,
-				targetWidth : 1024,
-				targetHeight : 768,
 				destinationType : Camera.DestinationType.DATA_URL,
 				saveToPhotoAlbum: true,
 				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
@@ -963,8 +962,6 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 	$scope.plusz1Image = function() {
 		var options = {
 			quality : 50,
-			targetWidth : 1024,
-			targetHeight : 768,
 			destinationType : Camera.DestinationType.DATA_URL,
 			saveToPhotoAlbum: true, 
 			sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
@@ -1028,63 +1025,64 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 	
 	
 	document.getElementById('originalPhoto').src = "data:image/jpeg;base64,"+$rootScope.kepAdat;
+	var oriImg = "data:image/jpeg;base64,"+$rootScope.kepAdat;
+	
+	$('.filter').css('background', 'url(' + oriImg  + ') no-repeat 0 0');
+	$('.filter').css('background-size', 'cover');
+	
+	
+	
 	
 	var originalPhoto = document.getElementById('originalPhoto');
 
-	document.getElementById('filterButtons').addEventListener('click', prepFilterEffect, false);
-
-	function prepFilterEffect(e) {
-		
-		var filterButton = getFilterButton(e.target);
-		if (!filterButton)
-			return;
-
-		ApplyEffects[filterButton.id](originalPhoto, 'jpeg');
-		
-
-	}
-
-	function getFilterButton(target) {
-		var button;
-		if (target.classList.contains('filter')) {
-			button = target;
-		} else if (target.parentNode.classList.contains('filter')) {
-			button = target.parentNode;
-		}
-		
-		return button;
-	}
-
+	$scope.default =  function(){
+		$("img").css("-webkit-filter","none");
+		$("img").css("filter","none");		
+	};
 	
-	
+	$scope.xpro2 =  function(){
+		$("img").css("-webkit-filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");
+		$("img").css("filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");		
+	};	
+	$scope.willow =  function(){
+		$("img").css("-webkit-filter","saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02)");
+		$("img").css("filter","saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02)");		
+	};	
+	$scope.Walden =  function(){
+		$("img").css("-webkit-filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");
+		$("img").css("filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");		
+	};	
+	$scope.Toaster =  function(){
+		$("img").css("-webkit-filter","sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67)");
+		$("img").css("filter","sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67)");		
+	};	
+	$scope.Sutro=  function(){
+		$("img").css("-webkit-filter","brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg)");
+		$("img").css("filter","brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg)");		
+	};
+	$scope.Kelvin =  function(){
+		$("img").css("-webkit-filter","sepia(0.4) saturate(2.4) brightness(1.3) contrast(1)");
+		$("img").css("filter","sepia(0.4) saturate(2.4) brightness(1.3) contrast(1)");		
+	};
+	$scope.Brannan =  function(){
+		$("img").css("-webkit-filter","sepia(0.5) contrast(1.4)");
+		$("img").css("filter","sepia(0.5) contrast(1.4)");		
+	};
+	$scope.oldstyle =  function(){
+		$("img").css("-webkit-filter"," sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8)");
+		$("img").css("filter"," sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8)");		
+	};
 	
 
-
-	
 	$scope.back = function(){
 		$state.go('home');
 	};
-	$scope.cont = function(){
-		if(document.getElementById('filteredPhoto') !== null){
-			$rootScope.finalKep = document.getElementById('filteredPhoto').src;	
-		}else{
-			$rootScope.finalKep = document.getElementById('originalPhoto').src;		
-		}
+	$scope.cont = function(){		
+		$rootScope.finalKep = document.getElementById('originalPhoto').src;			
 		$rootScope.images.push($rootScope.finalKep);	 		
 		$state.go('upload');
 	};
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    
 }])
 
 .controller('loginCtrl', ['$scope','$rootScope','$ionicPopup','$state','$ionicLoading', 'userService', function($scope, $rootScope, $ionicPopup, $state,$ionicLoading, userService) {

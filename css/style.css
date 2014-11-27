@@ -80,37 +80,52 @@
 	background-size: cover;
 }
 
-#reset {
-	background: url("filters/baba.jpg") no-repeat 0 0;
-	background-size: cover;
+#default {
+	
+	-webkit-filter: none;
+	filter: none;
 }
-#fluorescent {
-	background: url("filters/fluorescent.jpg") no-repeat 0 0;
-	background-size: cover;
+#xpro2 {
+	
+	-webkit-filter: contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg);
+	filter: contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg);
 }
-#nostalgia {
-	background: url("filters/nostalgia.jpg") no-repeat 0 0;
-	background-size: cover;
+
+#willow {
+	
+	-webkit-filter: saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02);
+	filter: saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02);
 }
-#phykos {
-	background: url("filters/phykos.jpg") no-repeat 0 0;
-	background-size: cover;
+#Walden {
+	
+	-webkit-filter: sepia(0.35) contrast(0.9) brightness(1.1) hue-rotate(-10deg) saturate(1.5);
+	filter: sepia(0.35) contrast(0.9) brightness(1.1) hue-rotate(-10deg) saturate(1.5);
 }
-#lotus {
-	background: url("filters/lotus.jpg") no-repeat 0 0;
-	background-size: cover;
+#Toaster {
+	
+	-webkit-filter: sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67);
+	filter: sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67);
 }
-#memphis {
-	background: url("filters/memphis.jpg") no-repeat 0 0;
-	background-size: cover;
+#Sutro {
+	
+	
+	-webkit-filter: brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg);
+	filter: brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg);
 }
-#deutlich {
-	background: url("filters/deutlich.jpg") no-repeat 0 0;
-	background-size: cover;
+#Kelvin {	
+	
+	-webkit-filter: sepia(0.4) saturate(2.4) brightness(1.3) contrast(1);
+	filter: sepia(0.4) saturate(2.4) brightness(1.3) contrast(1);
 }
-#sumie {
-	background: url("filters/sumie.jpg") no-repeat 0 0;
-	background-size: cover;
+#Brannan {
+	
+	-webkit-filter: sepia(0.5) contrast(1.4);
+	filter: sepia(0.5) contrast(1.4);
+}
+#oldstyle {
+	
+	-webkit-filter: sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8);
+	filter: sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8);
 }
 
 /* make loading bar slide up/down */
@@ -145,7 +160,6 @@
 	right: 0;
 	top: 0;
 }
-
 
 /*corner ribbon */
 

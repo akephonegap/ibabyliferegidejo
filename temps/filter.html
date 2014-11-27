@@ -36,7 +36,7 @@
 <ion-header-bar align-title="center" style="background-color: #F521A2 ">
 	<div class="buttons">
 		<button style="color: white" class="button button-icon icon-left  ion-arrow-left-c" ng-click="back()">
-			Vissza 
+			Vissza
 		</button>
 	</div>
 	<h1 style="color: white"  class="title">IBabyLife</h1>
@@ -48,7 +48,7 @@
 </ion-header-bar>
 
 <div class="kepDiv card" >
-	<img  id="originalPhoto" class="card" />
+	<img  id="originalPhoto" class="card" src="css/filters/baba.jpg" />
 </div>
 <button class="button filterTitle button-block button-light transparent" >
 
@@ -59,47 +59,34 @@
 <ion-scroll direction="x" class="wide-as-needed filterDiv card">
 	<section id="filterButtons">
 
-		<div id="reset" class="filter button">
-			<div class="filter-tag">
+		<div id="default" ng-click='default()' class="filter button">
 
-			</div>
 		</div>
-		<div id="fluorescent" class="filter button">
-			<div class="filter-tag">
+		<div id="xpro2"  ng-click='xpro2()' class="filter button">
 
-			</div>
 		</div>
-		<div id="nostalgia" class="filter button">
-			<div class="filter-tag">
+		<div id="willow" ng-click='willow()' class="filter button">
 
-			</div>
 		</div>
-		<div id="phykos" class="filter button">
-			<div class="filter-tag">
+		<div id="Walden" ng-click='Walden()' class="filter button">
 
-			</div>
 		</div>
-		<div id="lotus" class="filter button">
-			<div class="filter-tag">
+		<div id="Sutro" ng-click='Sutro()' class="filter button">
 
-			</div>
 		</div>
-		<div id="memphis" class="filter button">
-			<div class="filter-tag">
+		<div id="Toaster" ng-click='Toaster()' class="filter button">
 
-			</div>
 		</div>
-		<div id="deutlich" class="filter button">
-			<div class="filter-tag">
+		
+		<div id="Kelvin" ng-click='Kelvin()' class="filter button">
 
-			</div>
 		</div>
-		<div id="sumie" class="filter button">
-			<div class="filter-tag">
+		<div id="Brannan" ng-click='Brannan()' class="filter button">
 
-			</div>
 		</div>
+		<div id="oldstyle" ng-click='oldstyle()' class="filter button">
 
+		</div>
 	</section>
 </ion-scroll>
 
