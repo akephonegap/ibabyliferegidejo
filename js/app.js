@@ -346,49 +346,62 @@ angular.module('starter', ['ionic','angular-carousel'])
 
 
 	$scope.feedback = function(){
-		 var myPopup = $ionicPopup.show({
-		    template: '<input type="text" ng-model="data.feedback">',
-		    title: 'Segítsd munkánkat',
-		    subTitle: 'Kérlek, írj pár mondatot arról, hogy milyennek találod az alkalmazást. Ha van valami, amit hiányolsz, azt is nyugodtan írd ide. Köszönjük !',
-		    scope: $scope,
-		    buttons: [
-		      { text: 'Mégsem' },
-		      {
-		        text: '<b>Küldés</b>',
-		        type: 'button-pink',
-		        onTap: function(e) {
-		          if (!$scope.data.feedback) {
-		            //don't allow the user to close unless he enters wifi password
-		            e.preventDefault();
-		          } else {
-		          	  $scope.feedbackData = {};
-		          	  $scope.feedbackData.message = $scope.data.feedback;
-		          	  $scope.feedbackData.deviceModel = device.model;
-		          	  $scope.feedbackData.devicePlatform = device.platform;
-		          	  $scope.feedbackData.deviceVersion = device.version;
-		          	  
-		          	  
-		          	  
-			          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
-														
-						}).error(function(data, status, headers, config) {							
-							var myPopup = $ionicPopup.show({
-								template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
-								title : 'Nincs internetkapcsolatod !',
-								buttons : [{
-									text : '<b>Rendben</b>',
-									type : 'button-light'
-								}]
+		if(checkConnection()){
+			 var myPopup = $ionicPopup.show({
+			    template: '<input type="text" ng-model="data.feedback">',
+			    title: 'Segítsd munkánkat',
+			    subTitle: 'Kérlek, írj pár mondatot arról, hogy milyennek találod az alkalmazást. Ha van valami, amit hiányolsz, azt is nyugodtan írd ide. Köszönjük !',
+			    scope: $scope,
+			    buttons: [
+			      { text: 'Mégsem' },
+			      {
+			        text: '<b>Küldés</b>',
+			        type: 'button-pink',
+			        onTap: function(e) {
+			          if (!$scope.data.feedback) {
+			            //don't allow the user to close unless he enters wifi password
+			            e.preventDefault();
+			          } else {
+			          	  $scope.feedbackData = {};
+			          	  $scope.feedbackData.message = $scope.data.feedback;
+			          	  $scope.feedbackData.deviceModel = device.model;
+			          	  $scope.feedbackData.devicePlatform = device.platform;
+			          	  $scope.feedbackData.deviceVersion = device.version;
+			          	  
+			          	  
+			          	  
+				          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
+									
+								var myPopup = $ionicPopup.show({									
+									title : 'Köszönönjük hogy segíti a munkánk!',
+									buttons : [{
+										text : '<b>Rendben</b>',
+										type : 'button-pink'
+									}]
+								});
+					
+							}).error(function(data, status, headers, config) {							
+								
 							});
-						});
+	
+			               
+			          }
+			        }
+			      },
+			    ]
+			  });
+	
+		}else {
+			var myPopup = $ionicPopup.show({
+				template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
+				title : 'Nincs internetkapcsolatod !',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-light'
+				}]
+			});
+		}
 
-		               
-		          }
-		        }
-		      },
-		    ]
-		  });
-		
 	};
 	
 	$scope.albumline = function(albumid,albumname,albumowner){
