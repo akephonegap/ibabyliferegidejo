@@ -332,8 +332,7 @@ angular.module('starter', ['ionic','angular-carousel'])
 
 
 			
-		}).error(function(data, status, headers, config) {
-			alert('Nincs kapcsolat a szerverrel');
+		}).error(function(data, status, headers, config) {			
 			dao.findAllAlbum(function(albums) {
 				$scope.albums = albums;
 				$scope.$apply();
@@ -372,9 +371,17 @@ angular.module('starter', ['ionic','angular-carousel'])
 		          	  
 			          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
 														
-						}).error(function(data, status, headers, config) {
-							alert('Nincs kapcsolat a szerverrel');	
+						}).error(function(data, status, headers, config) {							
+							var myPopup = $ionicPopup.show({
+								template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
+								title : 'Nincs internetkapcsolatod !',
+								buttons : [{
+									text : '<b>Rendben</b>',
+									type : 'button-light'
+								}]
+							});
 						});
+
 		               
 		          }
 		        }
@@ -385,10 +392,23 @@ angular.module('starter', ['ionic','angular-carousel'])
 	};
 	
 	$scope.albumline = function(albumid,albumname,albumowner){
-		$rootScope.albumid = albumid;
-		$rootScope.albumname = albumname;
-		$rootScope.albumowner= albumowner;		
-		$state.go('albumline');
+		
+		if (checkConnection()) {
+			$rootScope.albumid = albumid;
+			$rootScope.albumname = albumname;
+			$rootScope.albumowner = albumowner;
+			$state.go('albumline');
+		} else {
+			var myPopup = $ionicPopup.show({
+				template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
+				title : 'Nincs internetkapcsolatod !',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-light'
+				}]
+			});
+		}
+
 	};
 	
 	$scope.newalbum = function() {		 
@@ -536,56 +556,61 @@ angular.module('starter', ['ionic','angular-carousel'])
 	
 
    
-	$scope.uploadEvent = function(eventID, tombID) {
-
-		$ionicLoading.show({
-			template : '<i class="icon ion-looping"></i> Feltöltés a szerverre...'
-		}); 
-
-		dao.eventById(eventID, function(event) {
-			$scope.eventData = event[0];			
-			
-			console.log($scope.eventData);
-
-			dao.findAlbumByID($scope.eventData.albumId, function(album) {
-				$scope.album = album;
-				
-				if( $scope.album[0].albumOwner == $rootScope.user.email){
-					$scope.eventData.albumOwner = $rootScope.user.email;
-				}else{
-					$scope.eventData.albumOwner =  $scope.album[0].albumOwner;
-				}
-				
-				
-				$scope.eventData.albumName = $scope.album[0].albumName;
-				$scope.eventData.albumDate = $scope.album[0].albumDate;
-				$scope.eventData.albumSex = $scope.album[0].albumSex;
-				
-				
-				
-			
-				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
-					
-					$ionicLoading.hide();	
-									
-					dao.eventFeltolt(eventID);
-					$scope.offlineEvents.splice(tombID, 1);
-					
-					
-					if ($scope.offlineEvents.length == 0) {
-						cordova.plugins.notification.badge.clear();
-					} else {
-						cordova.plugins.notification.badge.set($scope.offlineEvents.length);
-					}						
-					
-				}).error(function(data, status, headers, config) {
-					alert('Nincs kapcsolat a szerverrel');	
-				});
-				
-
+	$scope.uploadEvent = function(eventID, tombID) {		
+		if (checkConnection()) {
+			$ionicLoading.show({
+				template : '<i class="icon ion-looping"></i> Feltöltés a szerverre...'
 			});
 
-		});
+			dao.eventById(eventID, function(event) {
+				$scope.eventData = event[0];
+
+				console.log($scope.eventData);
+
+				dao.findAlbumByID($scope.eventData.albumId, function(album) {
+					$scope.album = album;
+
+					if ($scope.album[0].albumOwner == $rootScope.user.email) {
+						$scope.eventData.albumOwner = $rootScope.user.email;
+					} else {
+						$scope.eventData.albumOwner = $scope.album[0].albumOwner;
+					}
+
+					$scope.eventData.albumName = $scope.album[0].albumName;
+					$scope.eventData.albumDate = $scope.album[0].albumDate;
+					$scope.eventData.albumSex = $scope.album[0].albumSex;
+
+					$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
+
+						$ionicLoading.hide();
+
+						dao.eventFeltolt(eventID);
+						$scope.offlineEvents.splice(tombID, 1);
+
+						if ($scope.offlineEvents.length == 0) {
+							cordova.plugins.notification.badge.clear();
+						} else {
+							cordova.plugins.notification.badge.set($scope.offlineEvents.length);
+						}
+
+					}).error(function(data, status, headers, config) {
+						alert('Nincs kapcsolat a szerverrel');
+					});
+
+				});
+
+			});
+		} else {
+			var myPopup = $ionicPopup.show({
+				template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
+				title : 'Nincs internetkapcsolatod !',
+				buttons : [{
+					text : '<b>Rendben</b>',
+					type : 'button-light'
+				}]
+			});
+		}
+
 
 	}; 
 
