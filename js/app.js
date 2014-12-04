@@ -1458,10 +1458,27 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 				      { text: '<b>Rendben</b>',	      
 				        type: 'button-light',				       
 						onTap: function(e) {
-							$rootScope.guest = true;
-							$state.go('home');
-							
+							if (online(facebookonline) || online(googleonline) || online(twitteronline)) {
+
+								$rootScope.user = {
+									name : localStorage.getItem('username'),
+									email : localStorage.getItem('email')
+								};
+								$ionicLoading.hide();
+								$state.go('home');
+
+							} else if (loginIBabyLife()) {
+								$rootScope.user = {
+									name : localStorage.getItem('ibabylifeusername'),
+									email : localStorage.getItem('ibabylifeemail')
+								};
+								$rootScope.$apply($rootScope.user);
+								$ionicLoading.hide();
+								$state.go('home');
+							}
+
 						}
+
 
 				      }
 				    ]
