@@ -44,7 +44,7 @@ window.dao = {
 	
 	createAlbumsTable : function() {
 		this.db.transaction(function(tx) {
-			var sql = "CREATE TABLE IF NOT EXISTS albums ( id INTEGER PRIMARY KEY AUTOINCREMENT, albumOwner VARCHAR(50), albumName VARCHAR(50),albumDate datetime,albumSex varchar(10))";
+			var sql = "CREATE TABLE IF NOT EXISTS albums ( id INTEGER PRIMARY KEY AUTOINCREMENT, albumOwner VARCHAR(50), albumName VARCHAR(50),albumDate datetime ,albumSex varchar(10))";
 			tx.executeSql(sql);
 		}, this.txErrorHandler, function() {
 			console.log('Albums tábla sikeresen elkészitve !!');
@@ -162,6 +162,20 @@ window.dao = {
 			callback();
 		});
 	},
+	findAlbumByOwnerAndName : function(albumowner,albumname,callback) {
+		this.db.transaction(function(tx) {
+			var sql = "SELECT  * FROM albums WHERE albumOwner = '"+albumowner+"' AND albumName = '"+albumname+"' ";
+			tx.executeSql(sql, this.txErrorHandler, function(tx, results) {
+
+				var len = results.rows.length, albums = [], i = 0;
+				for (; i < len; i = i + 1) {					
+					albums[i] = results.rows.item(i);
+				}
+				callback(albums);
+			});
+		});
+	},
+	
 	findAlbumByID : function(albumid,callback) {
 		this.db.transaction(function(tx) {
 			var sql = "SELECT  * FROM albums where id="+albumid+"";

@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic','angular-carousel'])
 
 .run(function($ionicPlatform, $rootScope, $state, userService) {
   $ionicPlatform.ready(function() {
@@ -226,9 +226,29 @@ angular.module('starter', ['ionic'])
   return service;
 }])
 
-.controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicSideMenuDelegate','$ionicLoading','$http','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicSideMenuDelegate,$ionicLoading,$http, userService) {
+.controller('homeCtrl', ['$scope','$rootScope','$state','$ionicPopup','$ionicPlatform','$ionicSideMenuDelegate','$ionicLoading','$http','userService',function($scope, $rootScope, $state,$ionicPopup,$ionicPlatform,$ionicSideMenuDelegate,$ionicLoading,$http, userService) {
     $scope.data = {};  
-	
+    
+   	$ionicPlatform.registerBackButtonAction(function () {
+   		var myPopup = $ionicPopup.show({		   
+		    title: 'Kilépés',
+		    subTitle: 'Biztos ki akarsz lépni ?',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Nem' },
+		      {
+		        text: '<b>Igen</b>',
+		        type: 'button-pink',
+		        onTap: function(e) {
+		          navigator.app.exitApp();		          
+		        }
+		      },
+		    ]
+		  });	 
+	}, 100);
+   
+   
+   
 	
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
 	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
@@ -244,7 +264,86 @@ angular.module('starter', ['ionic'])
 		 }
 		 
 
-	});
+	});	
+
+	//dao.dropTables();
+	// albumszinkronizálás
+
+	dao.findAllAlbum(function(y) {
+		$scope.familyalbums = [];
+		$scope.minealbums = [];
+		
+		
+		
+		$scope.albums = y;
+		$scope.albums.forEach(function(album) {			
+			if(album.albumOwner!=$rootScope.user.email){				
+				$scope.familyalbums.push(album);						
+			}else{				
+				$scope.minealbums.push(album);
+			}
+		}); 		
+		
+		
+		$http.post('http://192.168.1.184/ibabylifeserver/myAlbums.php', {
+			albumowner : $rootScope.user.email
+		}).success(function(data, status, headers, config) {	
+			
+			
+			var myalbums = data;
+			
+						
+			if (( typeof myalbums === 'object')) {
+				console.log(myalbums);
+			
+				for (myalbum in myalbums) {					
+					var e = myalbums[myalbum];
+					var result = $.grep($scope.albums, function(e) {
+						return e.albumName == myalbums[myalbum].albumName;
+					});
+				
+					if (result.length == 0) {
+						dao.newAlbum(myalbums[myalbum], function() {
+						});
+						$scope.albums.push(myalbums[myalbum]);						
+					} else if (result.length == 1) {
+					}
+
+				}
+			}else{
+				alert(myalbums);
+			};
+	
+	
+			
+			dao.findAllAlbum(function(y) {
+				$scope.familyalbums = [];
+				$scope.minealbums = [];
+				$scope.albums = y;
+				$scope.albums.forEach(function(album) {
+					if (album.albumOwner != $rootScope.user.email) {
+						$scope.familyalbums.push(album);
+					} else {
+						$scope.minealbums.push(album);
+					}
+				});
+			}); 
+
+
+
+			
+		}).error(function(data, status, headers, config) {
+			alert('Nincs kapcsolat a szerverrel');
+			dao.findAllAlbum(function(albums) {
+				$scope.albums = albums;
+				$scope.$apply();
+				
+			});
+		});
+	}); 
+
+
+
 
 
 	$scope.feedback = function(){
@@ -285,8 +384,10 @@ angular.module('starter', ['ionic'])
 		
 	};
 	
-	$scope.albumline = function(albumid){
+	$scope.albumline = function(albumid,albumname,albumowner){
 		$rootScope.albumid = albumid;
+		$rootScope.albumname = albumname;
+		$rootScope.albumowner= albumowner;		
 		$state.go('albumline');
 	};
 	
@@ -294,11 +395,7 @@ angular.module('starter', ['ionic'])
 		$state.go('newAlbum');
 	};
 	
-	dao.findAllAlbum(function(albums) {
-		$scope.albums = albums;
-		$scope.data.album = $scope.albums[0];
-		$scope.$apply();
-	});
+	
 	
 	$scope.fotoalbum = function() {
 		if ($scope.albums.length == 0) {
@@ -365,13 +462,8 @@ angular.module('starter', ['ionic'])
 	
 	$scope.logoutGuest=function(){
 		$state.go('login');
-	};
-	 
-	dao.findAllAlbum(function(albums) {
-		$scope.albums = albums;
-		$scope.$apply();
-		console.log($scope.albums);
-	});
+	};	 
+
 	
 
     $scope.takePic = function() {	
@@ -405,12 +497,10 @@ angular.module('starter', ['ionic'])
        
     };
     var onSuccess = function(imageData) {
-		$scope.picData = "data:image/jpeg;base64,"+imageData; 
-		$rootScope.kepAdat = imageData;
-		$rootScope.images = [];
-		$state.go('filter');
-		
-			
+		$scope.picData = "data:image/jpeg;base64,"+imageData; 		
+		$rootScope.images = [];				
+		$rootScope.images.push($scope.picData );	 		
+		$state.go('upload');			
     };
     
     
@@ -454,21 +544,33 @@ angular.module('starter', ['ionic'])
 
 		dao.eventById(eventID, function(event) {
 			$scope.eventData = event[0];			
-			$scope.eventData.albumOwner = $rootScope.user.email;
+			
 			console.log($scope.eventData);
 
 			dao.findAlbumByID($scope.eventData.albumId, function(album) {
 				$scope.album = album;
+				
+				if( $scope.album[0].albumOwner == $rootScope.user.email){
+					$scope.eventData.albumOwner = $rootScope.user.email;
+				}else{
+					$scope.eventData.albumOwner =  $scope.album[0].albumOwner;
+				}
+				
+				
 				$scope.eventData.albumName = $scope.album[0].albumName;
 				$scope.eventData.albumDate = $scope.album[0].albumDate;
+				$scope.eventData.albumSex = $scope.album[0].albumSex;
 				
 				
 				
-				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
+			
+				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
 					
-					$ionicLoading.hide();
+					$ionicLoading.hide();	
+									
 					dao.eventFeltolt(eventID);
 					$scope.offlineEvents.splice(tombID, 1);
+					
 					
 					if ($scope.offlineEvents.length == 0) {
 						cordova.plugins.notification.badge.clear();
@@ -492,13 +594,104 @@ angular.module('starter', ['ionic'])
 
 
 
-.controller('albumlineCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
-function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+
+.controller('albumlineCtrl', ['$scope', '$rootScope', '$ionicPopup','$ionicPlatform','$ionicScrollDelegate', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+	$scope.data = {};  
 	$scope.home = function() {
 		$state.go('home');
+	}; 
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('home');
+	}, 100);
+
+	
+	$scope.items = [];
+	for (var i = 0; i < 1000; i++) {
+		$scope.items.push('Item ' + i);
+	}
+
+	$scope.newEvent = function() {		
+		var options = {
+				quality : 50,
+				destinationType : Camera.DestinationType.DATA_URL,
+				saveToPhotoAlbum: true,
+				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
+				encodingType : 0,
+				correctOrientation : true
+			};
+			// Take picture using device camera and retrieve image as base64-encoded string
+		navigator.camera.getPicture(onSuccess, onFail, options);
+		
+
+     
+     
+	}; 
+	
+
+	$scope.share = function() {
+			 var myPopup = $ionicPopup.show({
+		    template: '<input type="text" ng-model="data.shareemail">',
+		    title: 'Oszd meg az albumot',
+		    subTitle: 'Kérlek add meg ismerősöd email címét, akivel megszeretnéd osztani ezt az albumot, hogy ő is tudjon hozzáadni eseményeket',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Mégsem' },
+		      {
+		        text: '<b>Megosztás</b>',
+		        type: 'button-pink',
+		        onTap: function(e) {
+		          if (!$scope.data.shareemail) {
+		            //don't allow the user to close unless he enters wifi password
+		            e.preventDefault();
+		          } else {     	
+		          	  $scope.shareData = {};
+		          	  $scope.shareData.shareemail = $scope.data.shareemail;				   
+				      $scope.shareData.albumOwner = $scope.album[0].albumOwner;
+				      $scope.shareData.albumName = $scope.album[0].albumName;
+				      $scope.shareData.albumDate = $scope.album[0].albumDate;
+				      $scope.shareData.albumSex = $scope.album[0].albumSex;
+				      
+					  
+		          	  	          	  
+			          $http.post('http://192.168.1.184/ibabylifeserver/share.php', $scope.shareData).success(function(data, status, headers, config) {			
+		
+							var myPopup = $ionicPopup.show({
+								title : 'Megosztva',
+								template : 'Ezt az albumot sikeresen megosztottad ismerősöddel. Az album időfolyamát most már mindeketten szerkeszthetitek !',
+								buttons : [{
+									text : '<b>Rendben</b>',
+									type : 'button-pink'									
+								}]
+							});
+							
+						}).error(function(data, status, headers, config) {
+							alert('Nincs kapcsolat a szerverrel');	
+						});
+		               
+		          }
+		        }
+		      },
+		    ]
+		  });
+
 	};
+
 	
 	
+ 	var onSuccess = function(imageData) {
+		$scope.picData = "data:image/jpeg;base64,"+imageData; 
+		$rootScope.albumID = $scope.albumData.albumid;		
+		$rootScope.images = [];				
+		$rootScope.images.push($scope.picData );	 		
+		$state.go('upload');			
+    };
+    
+    
+    function onFail(message) {
+      console.log('Nem sikerült képet csinálni, mert kiléptél a kamerából');
+    }   
+
 	$scope.mikorTortent = function(eventDate) {
 		var date1 = new Date($scope.album[0].albumDate);
 		var date2 = new Date(eventDate);
@@ -513,75 +706,71 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 		} else {
 			return diffDays + ' napos korban';
 		}
-	}; 
-	
+	};
 
-	
-	
-	dao.getAllEventById($rootScope.albumid, function(events) {
-	
+	$scope.albumData = {};
+	$scope.albumData.albumowner = $rootScope.albumowner;
+	$scope.albumData.albumid = $rootScope.albumid;
+	$scope.albumData.albumname = $rootScope.albumname;
+
+	$http.post('http://192.168.1.184/ibabylifeserver/albumEvents.php', $scope.albumData).success(function(data, status, headers, config) {
 		dao.findAlbumByID($rootScope.albumid, function(album) {
 			$scope.album = album;
-			$scope.events = events;
-	
+			$scope.events = data;
+			
+
+
+			$.each($scope.events, function(key, value) {
+				$scope.events[key].kepek = [];
+				if($scope.events[key].eventImg1!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg1);
+				if($scope.events[key].eventImg2!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg2);
+				if($scope.events[key].eventImg3!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg3);
+				if($scope.events[key].eventImg4!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg4);
+				if($scope.events[key].eventImg5!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg5);
+				if($scope.events[key].eventImg6!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg6);
+				if($scope.events[key].eventImg7!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg7);
+				if($scope.events[key].eventImg8!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg8);
+				if($scope.events[key].eventImg9!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg9);
+				if($scope.events[key].eventImg10!='undefined')
+				$scope.events[key].kepek.push($scope.events[key].eventImg10);
+				
+				console.log($scope.events[key].kepek);
+				
+				
+			}); 
+
+			
 			var date1 = new Date($scope.album[0].albumDate);
 			var date2 = new Date();
 			var timeDiff = Math.abs(date2.getTime() - date1.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-	
+
 			if (diffDays >= 365) {
-				$scope.kor = parseInt(diffDays / 365) + ' éves ';	
+				$scope.kor = parseInt(diffDays / 365) + ' éves ';
 			} else if (diffDays < 365 && diffDays > 30) {
 				$scope.kor = parseInt(diffDays / 30) + ' hónapos ';
-			} else if(Math.ceil(timeDiff / (1000 * 3600))<24) {
-				$scope.kor = Math.ceil(timeDiff / (1000 * 3600)) +  ' órás';
-			}else{
+			} else {
 				$scope.kor = diffDays + ' napos';
 			}
-			
-			console.log(date1);
-			console.log(date2);
-			console.log();
-			console.log($scope.kor);
 			$scope.$apply();
+			$(".carousel1").css("width", $(window).width()*0.91);
+			$(".carousel1").css("height", $(window).width()*0.91);
 		});
-	}); 
+
+	}).error(function(data, status, headers, config) {
+		alert('Nincs kapcsolat a szerverrel');
+	});
 
 	
-	function currentTime() {
-		var currentTime = new Date;
-		var Minutes = currentTime.getMinutes();
-		if (Minutes < 10) {
-			Minutes = '0' + Minutes;
-		}
-		var Hour = currentTime.getHours();
-		if (Hour < 10) {
-			Hour = '0' + Hour;
-		}
-		var second = currentTime.getSeconds();
-		if (second < 10) {
-			second = '0' + second;
-		}
-
-		var Time = Hour + ':' + Minutes + ':' + second;
-		return Time;
-	}
-	
-	function currentDate() {
-		var currentDate = new Date;
-		var Day = currentDate.getDate();
-		if (Day < 10) {
-			Day = '0' + Day;
-		}//end if
-		var Month = currentDate.getMonth() + 1;
-		if (Month < 10) {
-			Month = '0' + Month;
-		}//end if
-		var Year = currentDate.getFullYear();
-		var fullDate = Year + '-' + Month + '-' + Day;
-		return fullDate;
-	}//end current date function
-
 	$ionicModal.fromTemplateUrl('image-modal.html', {
       scope: $scope,
       animation: 'slide-in-up'
@@ -621,11 +810,15 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 
 }])
 
-.controller('newAlbumCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
-function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+
+.controller('newAlbumCtrl', ['$scope', '$rootScope', '$ionicPopup','$ionicPlatform', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup,$ionicPlatform, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
 	$scope.home = function() {
 		$state.go('home');
 	};
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('home');
+	}, 100);
 	$scope.data= {};
 	
 	
@@ -665,7 +858,8 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 		            album = {
 			    		albumName : $scope.data.albumName,
 			    		albumDate : $('#albumDate').val(),
-			    		albumSex  : $scope.data.albumSex
+			    		albumSex  : $scope.data.albumSex,
+			    		albumOwner : $rootScope.user.email
 			    	};
 			    	dao.newAlbum(album,function(){});
 			    	var myPopup = $ionicPopup.show({
@@ -689,11 +883,15 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 	
 
 }])
-.controller('fotoalbumCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
-function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
+.controller('fotoalbumCtrl', ['$scope', '$rootScope', '$ionicPopup','$ionicPlatform', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup,$ionicPlatform, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
 	$scope.home = function() {
 		$state.go('home');
 	};
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('home');
+	}, 100);
+	
 	$scope.fotoalbum= $rootScope.fotoalbum;
 	console.log($scope.fotoalbum);	
 
@@ -711,12 +909,14 @@ function($scope, $rootScope, $ionicPopup, $state, $http, $ionicModal, $ionicSlid
 	
 
 }])
-.controller('timelineCtrl', ['$scope', '$rootScope', '$ionicPopup', '$state', '$http','$ionicModal', '$ionicSlideBoxDelegate', 'userService',
-function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlideBoxDelegate, userService) {
+.controller('timelineCtrl', ['$scope', '$rootScope', '$ionicPopup','$ionicPlatform', '$state', '$http','$ionicModal', '$ionicSlideBoxDelegate', 'userService',
+function($scope, $rootScope, $ionicPopup,$ionicPlatform, $state, $http,$ionicModal, $ionicSlideBoxDelegate, userService) {
 	$scope.home = function() {
 		$state.go('home');
 	};
-
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('home');
+	}, 100);
 	
 	dao.getAllEvent(function(events) {
 	
@@ -770,11 +970,14 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 }])
 
 
-.controller('signinCtrl', ['$scope', '$rootScope','$ionicPopup', '$state','$http','userService',function($scope, $rootScope,$ionicPopup, $state,$http, userService) {
+.controller('signinCtrl', ['$scope', '$rootScope','$ionicPopup','$ionicPlatform', '$state','$http','userService',function($scope, $rootScope,$ionicPopup,$ionicPlatform, $state,$http, userService) {
 
 	$scope.back=function(){
 		$state.go('login');
 	};
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('login');	  
+	}, 100);
 	
 	$scope.logAjax = function() {
 		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/login.php?' + jQuery("#form-login").serialize()).success(function(data) {
@@ -821,11 +1024,14 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 }])
 
 
-.controller('signupCtrl', ['$scope', '$rootScope','$ionicPopup', '$state','$http','userService',function($scope, $rootScope,$ionicPopup, $state,$http, userService) {
+.controller('signupCtrl', ['$scope', '$rootScope','$ionicPopup','$ionicPlatform', '$state','$http','userService',function($scope, $rootScope,$ionicPopup,$ionicPlatform,$state,$http, userService) {
 		
 	$scope.back=function(){
 		$state.go('login');
 	};
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    $state.go('login');	  
+	}, 100);
 	
 	$scope.regAjax = function() {
 		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/signup.php?' + jQuery("#form-signup").serialize()).success(function(data) {
@@ -861,69 +1067,219 @@ function($scope, $rootScope, $ionicPopup, $state, $http,$ionicModal, $ionicSlide
 }])
 
 
+.controller('uploadCtrl', ['$scope', '$rootScope', '$state', '$ionicPopup','$http','$ionicLoading','$ionicPlatform','$ionicActionSheet', 'userService',
+function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatform,$ionicActionSheet, userService) {
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    var myPopup = $ionicPopup.show({		   
+		    title: 'Kilépés',
+		    subTitle: 'Biztos visszalépsz a főmenübe ?',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Nem' },
+		      {
+		        text: '<b>Igen</b>',
+		        type: 'button-pink',
+		       	onTap: function(e) {
+					$rootScope.images = [];
+					$rootScope.albumID = false;
+					$state.go('home');
+				}
 
-.controller('uploadCtrl', ['$scope', '$rootScope', '$state', '$ionicPopup','$ionicActionSheet', 'userService',
-function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService) {
+		      },
+		    ]
+		  });	 	  
+	}, 100);
+
+	$scope.home = function() {
+		$rootScope.images = [];
+		$rootScope.albumID = false;
+		$state.go('home');
+	}; 
+
 
 	$scope.data = [];
 
-	dao.findAllAlbum(function(albums) {
-		$scope.albums = albums;
-		$scope.data.album = $scope.albums[0];
-		$scope.$apply();
-	});
+	if (!$rootScope.albumID) {
+		dao.findAllAlbum(function(albums) {
+			$scope.albums = albums;
+			$scope.data.album = $scope.albums[0];
+			$scope.$apply();
+		});
+	} else {
+		dao.findAlbumByID($rootScope.albumID,function(albums){
+			$scope.albums = albums;
+			$scope.data.album = $scope.albums[0];
+			$scope.$apply();
+		});
+		
+		
+	}
 
-	
-	
 	$scope.images=$rootScope.images;	
 	$scope.$apply();
+	$(".carousel1").css("width", $(window).width()*0.95);
+	$(".carousel1").css("height", $(window).width()*0.95);
 
 
-
-	$scope.home = function() {
-		$state.go('home');
-	};
+	
 
 	$scope.mentve = false;
 
 	$scope.saveEvent = function() {
+		$ionicLoading.show({
+			template : '<i class="icon ion-looping"></i> Feltöltés a szerverre...'
+		}); 
+				
+		if (checkConnection()) {
+		
+			$scope.eventData = {};
+		
+			
+			
+			if ($scope.data.message)
+				$scope.eventData.eventMessage = $scope.data.message;
+			else
+				$scope.eventData.eventMessage = 'undefined';
 
-		$scope.data.albumid = $scope.data.album.id;
-		$scope.data.eventMessage = $scope.data.message;
-		$scope.data.eventMilestone = $scope.data.milestone;
-		$scope.data.eventImg1 = $scope.images[0];
-		$scope.data.eventImg2 = $scope.images[1];
-		$scope.data.eventImg3 = $scope.images[2];
-		$scope.data.eventImg4 = $scope.images[3];
-		$scope.data.eventImg5 = $scope.images[4];
-		$scope.data.eventImg6 = $scope.images[5];
-		$scope.data.eventImg7 = $scope.images[6];
-		$scope.data.eventImg8 = $scope.images[7];
-		$scope.data.eventImg9 = $scope.images[8];
-		$scope.data.eventImg10 = $scope.images[9];
-		$scope.data.eventDate = currentDate() + " " + currentTime();
+			if ($scope.data.milestone)
+				$scope.eventData.eventMilestone = $scope.data.milestone;
+			else
+				$scope.eventData.eventMilestone = 'undefined';
 
-		dao.newEVent($scope.data, function() {
-			var myPopup = $ionicPopup.show({
-				template : 'Ezt az eseményt elmentettük a telefonra, ha internet közelben leszel, töltsd fel a szerverre.',
-				title : 'Esemény mentve !',
-				buttons : [{
-					text : '<b>Rendben</b>',
-					type : 'button-pink',
-					onTap : function(e) {
-						$scope.mentve = true;
-					}
-				}]
+			if ($scope.images[0])
+				$scope.eventData.eventImg1 = $scope.images[0];
+			else
+				$scope.eventData.eventImg2 = 'undefined';
+
+			if ($scope.images[1])
+				$scope.eventData.eventImg2 = $scope.images[1];
+			else
+				$scope.eventData.eventImg2 = 'undefined';
+			
+			if ($scope.images[2])
+				$scope.eventData.eventImg3 = $scope.images[2];
+			else
+				$scope.eventData.eventImg3 = 'undefined';
+				
+			if ($scope.images[3])
+				$scope.eventData.eventImg4 = $scope.images[3];
+			else
+				$scope.eventData.eventImg4 = 'undefined';
+				
+			if ($scope.images[4])
+				$scope.eventData.eventImg5 = $scope.images[4];
+			else
+				$scope.eventData.eventImg5 = 'undefined';
+				
+			if ($scope.images[5])
+				$scope.eventData.eventImg6 = $scope.images[5];
+			else
+				$scope.eventData.eventImg6 = 'undefined';
+				
+			if ($scope.images[6])
+				$scope.eventData.eventImg7 = $scope.images[6];
+			else
+				$scope.eventData.eventImg7 = 'undefined';
+				
+			if ($scope.images[7])
+				$scope.eventData.eventImg8 = $scope.images[7];
+			else
+				$scope.eventData.eventImg8 = 'undefined';
+				
+			if ($scope.images[8])
+				$scope.eventData.eventImg9 = $scope.images[8];
+			else
+				$scope.eventData.eventImg9 = 'undefined';
+				
+			if ($scope.images[9])
+				$scope.eventData.eventImg10 = $scope.images[9];
+			else
+				$scope.eventData.eventImg10 = 'undefined';
+
+			
+			
+			$scope.eventData.eventDate = currentDate() + " " + currentTime();
+			
+		
+			dao.findAlbumByID($scope.data.album.id, function(album) {
+				$scope.album = album;
+				
+				
+				
+				if( $scope.album[0].albumOwner == $rootScope.user.email){
+					$scope.eventData.albumOwner = $rootScope.user.email;
+				}else{
+					$scope.eventData.albumOwner =  $scope.album[0].albumOwner;
+				}				
+				$scope.eventData.albumId = $scope.data.album.id;
+				$scope.eventData.albumName = $scope.album[0].albumName;
+				$scope.eventData.albumDate = $scope.album[0].albumDate;
+				$scope.eventData.albumSex = $scope.album[0].albumSex;
+				
+			
+				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
+					$ionicLoading.hide();									
+					var myPopup = $ionicPopup.show({
+						template : 'Ezt az eseményt sikeresen feltöltöttük !',
+						title : 'Esemény feltöltve !',
+						buttons : [{
+							text : '<b>Rendben</b>',
+							type : 'button-pink',
+							onTap : function(e) {
+								
+								//$scope.mentve = true;
+							}
+						}]
+					});				
+					
+					
+				}).error(function(data, status, headers, config) {
+					alert('Nincs kapcsolat a szerverrel');	
+				});
+				
+
 			});
+			
+		} else {
+			$scope.data.albumid = $scope.data.album.id;
+			$scope.data.eventMessage = $scope.data.message;
+			$scope.data.eventMilestone = $scope.data.milestone;
+			$scope.data.eventImg1 = $scope.images[0];
+			$scope.data.eventImg2 = $scope.images[1];
+			$scope.data.eventImg3 = $scope.images[2];
+			$scope.data.eventImg4 = $scope.images[3];
+			$scope.data.eventImg5 = $scope.images[4];
+			$scope.data.eventImg6 = $scope.images[5];
+			$scope.data.eventImg7 = $scope.images[6];
+			$scope.data.eventImg8 = $scope.images[7];
+			$scope.data.eventImg9 = $scope.images[8];
+			$scope.data.eventImg10 = $scope.images[9];
+			$scope.data.eventDate = currentDate() + " " + currentTime();
 
-		});
+			
+			dao.newEVent($scope.data, function() {
+				$ionicLoading.hide();
+				var myPopup = $ionicPopup.show({
+					template : 'Ezt az eseményt elmentettük a telefonra, ha internet közelben leszel, töltsd fel a szerverre.',
+					title : 'Esemény mentve !',
+					buttons : [{
+						text : '<b>Rendben</b>',
+						type : 'button-pink',
+						onTap : function(e) {
+							$scope.mentve = true;
+						}
+					}]
+				});
+
+			}); 
+
+		}
+
+		
 
 	};
 
-	$scope.back = function() {
-		$state.go('filter');
-	};
-
+	
 	function currentDate() {
 		var currentDate = new Date;
 		var Day = currentDate.getDate();
@@ -974,7 +1330,8 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
 	var onSuccess = function(imageData) {
 		$scope.picData = "data:image/jpeg;base64," + imageData;
 		$rootScope.kepAdat = imageData;			
-		$state.go('filter');		
+		$rootScope.images.push($scope.picData);	 		
+		$state.go('upload');	
 
 	};
 
@@ -1021,78 +1378,33 @@ function($scope, $rootScope, $state, $ionicPopup,$ionicActionSheet, userService)
     
 }])
 
-.controller('filterCtrl', ['$scope','$rootScope','$timeout', '$state','$ionicLoading', 'userService',function($scope, $rootScope,$timeout, $state,$ionicLoading, userService) {
-	
-	
-	document.getElementById('originalPhoto').src = "data:image/jpeg;base64,"+$rootScope.kepAdat;
-	var oriImg = "data:image/jpeg;base64,"+$rootScope.kepAdat;
-	
-	$('.filter').css('background', 'url(' + oriImg  + ') no-repeat 0 0');
-	$('.filter').css('background-size', 'cover');
-	
-	
-	
-	
-	var originalPhoto = document.getElementById('originalPhoto');
 
-	$scope.default =  function(){
-		$("img").css("-webkit-filter","none");
-		$("img").css("filter","none");		
-	};
-	
-	$scope.xpro2 =  function(){
-		$("img").css("-webkit-filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");
-		$("img").css("filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");		
-	};	
-	$scope.willow =  function(){
-		$("img").css("-webkit-filter","saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02)");
-		$("img").css("filter","saturate(0.02) contrast(0.85) brightness(1.2) sepia(0.02)");		
-	};	
-	$scope.Walden =  function(){
-		$("img").css("-webkit-filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");
-		$("img").css("filter","contrast(1.3) brightness(0.8) sepia(0.3) saturate(1.5) hue-rotate(-20deg)");		
-	};	
-	$scope.Toaster =  function(){
-		$("img").css("-webkit-filter","sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67)");
-		$("img").css("filter","sepia(0.4) saturate(2.5) hue-rotate(-30deg) contrast(0.67)");		
-	};	
-	$scope.Sutro=  function(){
-		$("img").css("-webkit-filter","brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg)");
-		$("img").css("filter","brightness(0.75) contrast(1.3) sepia(0.5) hue-rotate(-25deg)");		
-	};
-	$scope.Kelvin =  function(){
-		$("img").css("-webkit-filter","sepia(0.4) saturate(2.4) brightness(1.3) contrast(1)");
-		$("img").css("filter","sepia(0.4) saturate(2.4) brightness(1.3) contrast(1)");		
-	};
-	$scope.Brannan =  function(){
-		$("img").css("-webkit-filter","sepia(0.5) contrast(1.4)");
-		$("img").css("filter","sepia(0.5) contrast(1.4)");		
-	};
-	$scope.oldstyle =  function(){
-		$("img").css("-webkit-filter"," sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8)");
-		$("img").css("filter"," sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8)");		
-	};
-	
-
-	$scope.back = function(){
-		$state.go('home');
-	};
-	$scope.cont = function(){		
-		$rootScope.finalKep = document.getElementById('originalPhoto').src;			
-		$rootScope.images.push($rootScope.finalKep);	 		
-		$state.go('upload');
-	};
-	
-}])
-
-.controller('loginCtrl', ['$scope','$rootScope','$ionicPopup','$state','$ionicLoading', 'userService', function($scope, $rootScope, $ionicPopup, $state,$ionicLoading, userService) {
+.controller('loginCtrl', ['$scope','$rootScope','$ionicPopup','$ionicPlatform','$state','$ionicLoading', 'userService', function($scope, $rootScope, $ionicPopup,$ionicPlatform, $state,$ionicLoading, userService) {
 	  	 
 	  	 
 	
 	$ionicLoading.show({
 		template : 'Bejelentkezés..'
-	});	  
-	  
+	});	 
+	 
+	$ionicPlatform.registerBackButtonAction(function () {	 
+	    var myPopup = $ionicPopup.show({		   
+		    title: 'Kilépés',
+		    subTitle: 'Biztos ki akarsz lépni ?',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Nem' },
+		      {
+		        text: '<b>Igen</b>',
+		        type: 'button-pink',
+		        onTap: function(e) {
+		          navigator.app.exitApp();		          
+		        }
+		      },
+		    ]
+		  });	 	  
+	}, 100);
+
 	
 	var online = function(session) {
 		var current_time = (new Date()).getTime() / 1000;
