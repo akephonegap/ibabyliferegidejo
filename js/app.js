@@ -249,20 +249,20 @@ angular.module('starter', ['ionic','angular-carousel'])
    
    
    
-	/*
+	
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
 	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
-	*/
+	
 	
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		/*
+		
 		 if ($scope.offlineEvents.length == 0) {
 		 cordova.plugins.notification.badge.clear();
 		 } else {
 		 cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 		 }
-		 */
+		 
 
 	});	
 
@@ -600,13 +600,13 @@ angular.module('starter', ['ionic','angular-carousel'])
 
 						dao.eventFeltolt(eventID);
 						$scope.offlineEvents.splice(tombID, 1);
-/*
+
 						if ($scope.offlineEvents.length == 0) {
 							cordova.plugins.notification.badge.clear();
 						} else {
 							cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 						}
-*/
+
 					}).error(function(data, status, headers, config) {
 						$ionicLoading.hide();	
 						alert('Nincs kapcsolat a szerverrel');
