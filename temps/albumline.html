@@ -43,7 +43,7 @@
 				<div class="carousel-demo" >
 					<ul rn-carousel rn-carousel-controls rn-carousel-index="carouselIndex" rn-carousel-buffered class="carousel1">
 						<li ng-repeat="kep in event.kepek" >
-							<div ng-style="{'background-image': 'url(http://192.168.1.184/ibabylifeserver/image.php?image=' + kep + ')'}"  class="bgimage"></div>
+							<div ng-style="{'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + kep + ')'}"  class="bgimage"></div>
 						</li>
 					</ul>
 				</div>
@@ -67,7 +67,7 @@
 	<script id="image-modal.html" type="text/ng-template">
 		<div class="modal image-modal transparent" ng-click="closeModal()">
 		<ion-pane class="transparent">
-		<img ng-src="http://192.168.1.184/ibabylifeserver/image.php?image={{imageSrc}}" class="fullscreen-image"/>
+		<img ng-src="http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image={{imageSrc}}" class="fullscreen-image"/>
 		</ion-pane>
 		</div>
 	</script>

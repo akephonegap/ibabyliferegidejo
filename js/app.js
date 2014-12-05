@@ -249,20 +249,20 @@ angular.module('starter', ['ionic','angular-carousel'])
    
    
    
-	
+	/*
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
 	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
-	
+	*/
 	
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		
+		/*
 		 if ($scope.offlineEvents.length == 0) {
 		 cordova.plugins.notification.badge.clear();
 		 } else {
 		 cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 		 }
-		 
+		 */
 
 	});	
 
@@ -285,7 +285,7 @@ angular.module('starter', ['ionic','angular-carousel'])
 		}); 		
 		
 		
-		$http.post('http://192.168.1.184/ibabylifeserver/myAlbums.php', {
+		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/myAlbums.php', {
 			albumowner : $rootScope.user.email
 		}).success(function(data, status, headers, config) {	
 			
@@ -372,8 +372,9 @@ angular.module('starter', ['ionic','angular-carousel'])
 			          	  
 				          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
 									
-								var myPopup = $ionicPopup.show({									
-									title : 'Köszönönjük hogy segíti a munkánk!',
+								var myPopup = $ionicPopup.show({
+									template : 'Köszönönjük, hogy üzenetével támogatja a munkánk!',
+									title : 'Segíts !',
 									buttons : [{
 										text : '<b>Rendben</b>',
 										type : 'button-pink'
@@ -599,14 +600,15 @@ angular.module('starter', ['ionic','angular-carousel'])
 
 						dao.eventFeltolt(eventID);
 						$scope.offlineEvents.splice(tombID, 1);
-
+/*
 						if ($scope.offlineEvents.length == 0) {
 							cordova.plugins.notification.badge.clear();
 						} else {
 							cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 						}
-
+*/
 					}).error(function(data, status, headers, config) {
+						$ionicLoading.hide();	
 						alert('Nincs kapcsolat a szerverrel');
 					});
 
@@ -684,7 +686,8 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $s
 		            e.preventDefault();
 		          } else {     	
 		          	  $scope.shareData = {};
-		          	  $scope.shareData.shareemail = $scope.data.shareemail;				   
+		          	  $scope.shareData.shareemail = $scope.data.shareemail;
+		          	  $scope.shareData.meghivo = $rootScope.user.name;	   
 				      $scope.shareData.albumOwner = $scope.album[0].albumOwner;
 				      $scope.shareData.albumName = $scope.album[0].albumName;
 				      $scope.shareData.albumDate = $scope.album[0].albumDate;
@@ -692,7 +695,7 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $s
 				      
 					  
 		          	  	          	  
-			          $http.post('http://192.168.1.184/ibabylifeserver/share.php', $scope.shareData).success(function(data, status, headers, config) {			
+			          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/share.php', $scope.shareData).success(function(data, status, headers, config) {			
 		
 							var myPopup = $ionicPopup.show({
 								title : 'Megosztva',
@@ -751,7 +754,7 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $s
 	$scope.albumData.albumid = $rootScope.albumid;
 	$scope.albumData.albumname = $rootScope.albumname;
 
-	$http.post('http://192.168.1.184/ibabylifeserver/albumEvents.php', $scope.albumData).success(function(data, status, headers, config) {
+	$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/albumEvents.php', $scope.albumData).success(function(data, status, headers, config) {
 		dao.findAlbumByID($rootScope.albumid, function(album) {
 			$scope.album = album;
 			$scope.events = data;
@@ -1255,8 +1258,8 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 				$scope.eventData.albumSex = $scope.album[0].albumSex;
 				
 			
-				$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
-					$ionicLoading.hide();									
+				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
+					$ionicLoading.hide();								
 					var myPopup = $ionicPopup.show({
 						template : 'Ezt az eseményt sikeresen feltöltöttük !',
 						title : 'Esemény feltöltve !',
@@ -1264,14 +1267,14 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 							text : '<b>Rendben</b>',
 							type : 'button-pink',
 							onTap : function(e) {
-								
-								//$scope.mentve = true;
+								$scope.mentve = true;
 							}
 						}]
 					});				
 					
 					
 				}).error(function(data, status, headers, config) {
+					$ionicLoading.hide();	
 					alert('Nincs kapcsolat a szerverrel');	
 				});
 				
@@ -1490,7 +1493,7 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 			if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
 				$ionicLoading.hide();
 				var myPopup = $ionicPopup.show({					
-				    template: 'Mivel nincs internetkapcsolatod, csak offline módban tudsz tovább lépni. Lesznek olyan funkciók amikor ilyenkor nem használhatóak.',
+				    template: 'Mivel nincs internetkapcsolatod, csak offline módban tudsz tovább lépni. Lesznek olyan funkciók, amik ilyenkor nem használhatóak.',
 				    title: 'Nincs internetkapcsolatod !',
 				    buttons: [
 				      { text: '<b>Rendben</b>',	      
