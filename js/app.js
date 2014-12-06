@@ -560,7 +560,7 @@ angular.module('starter', ['ionic'])
 		
 		
 
-		window.plugins.Base64.encodeFile(imageData, function(base64) {
+		window.plugins.Base64.encodeFile('cdvfile://localhost/persistent/DCIM/Camera/1417891950187.jpg', function(base64) {
 			alert('evlileg ok');
 			
 			$rootScope.images = [];
