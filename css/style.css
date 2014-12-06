@@ -65,21 +65,41 @@
 	height: 100px;
 	padding: 0px;
 }
-
+ 
 .album {
 	width: 90px;
 	height: 40px;
 	padding: 0px;
 }
 .thumb {
-	display: inline-block;
-	width: 200px;
-	height: 200px;
-	padding: 0px;
+	display: inline;
+	float : left;
+	width: 300px;
+	height: 300px;	
+	padding : 0px;
 	background-position: center center;
 	background-size: cover;
+	border: none;
 }
 
+.egykep {
+    width: 300px;
+    height: 300px;
+}
+
+.negykep {
+    width: 150px;
+    height: 150px;
+}
+.hatkep {
+     width: 75px;
+    height: 75px;
+}
+
+.eventImage {
+	background-image: url("loader.gif");
+	background-position: 50% 50%;
+}
 
 /* make loading bar slide up/down */
 .bar-loading.ng-enter, .bar-loading.ng-leave.ng-leave-active {

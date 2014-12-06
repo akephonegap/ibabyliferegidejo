@@ -1,3 +1,10 @@
+<style>
+	.my-item {
+		left: 0;
+		right: 0;
+	}
+</style>
+
 <ion-header-bar align-title="center" style="background-color: #F521A2 ">
 	<div class="buttons">
 		<button style="color: white" class="button button-icon icon ion-arrow-left-c" ng-click="home()">
@@ -10,66 +17,102 @@
 		<button style="color: white" class="button button-icon icon ion-plus" ng-click="newEvent()"></button>
 	</div>
 </ion-header-bar>
-<ion-content overflow-scroll="true">
-	<ion-list>
-		<div style="margin: 5px" class="item">
-			<h1> {{album[0].albumName}}
-			</br>
-			<p>
-				{{kor}}
-			</p></h1>
+<ion-content delegate-handle="mainScroll" has-bouncing="true" scroll="true">
+	<div class="list" style="max-width: 600px;margin: auto auto">
 
-		</div>
-		<ion-item  style="background-color: transparent" ng-repeat="event in events">
+		<div  class="item my-item transparent"
+		collection-repeat="event in events"
+		collection-item-width="'100%'"
+		collection-item-height="450"
+		ng-style="450">
 
-			<div style="margin-bottom: 5px" class="list card">
+			<div class="item">
+				<p>
+					<z ng-if="event.eventMilestone!='undefined'">
+						{{event.eventMilestone}}
+						<br>
+					</z>
 
-				<div class="item">
-					<p>
-						<z ng-if="event.eventMilestone!='undefined'">
-							{{event.eventMilestone}}
-							<br>
-						</z>
-
-						{{event.eventDate}}
-						<br />
-						{{mikorTortent(event.eventDate)}}
-					</p>
-
-				</div>
-				<div ng-if="event.eventMessage!='undefined'" class="item">
-					{{event.eventMessage}}
-				</div>
-				<div class="carousel-demo" >
-					<ul rn-carousel rn-carousel-controls rn-carousel-index="carouselIndex" rn-carousel-buffered class="carousel1">
-						<li ng-repeat="kep in event.kepek" >
-							<div ng-style="{'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + kep + ')'}"  class="bgimage"></div>
-						</li>
-					</ul>
-				</div>
+					{{event.eventDate}}
+					<br />
+					{{mikorTortent(event.eventDate)}}
+				</p>
 
 			</div>
-		</ion-item>
-		-
-
-		<ion-item style="background-color: transparent">
-			<div class="item item-text-wrap" style="text-align: center">
-				{{album[0].albumDate}}
-				<br />
-				{{album[0].albumName}} megszületett !
-				<br />
-				~~~~~~~~~~~~~~~~~~~~~~~~
-				<br />
+			<div ng-if="event.eventMessage!='undefined'" class="item">
+				{{event.eventMessage}}
 			</div>
-		</ion-item>
-	</ion-list>
 
-	<script id="image-modal.html" type="text/ng-template">
-		<div class="modal image-modal transparent" ng-click="closeModal()">
-		<ion-pane class="transparent">
-		<img ng-src="http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image={{imageSrc}}" class="fullscreen-image"/>
-		</ion-pane>
+			<div id="kepekDiv" style="text-align: center;padding: 0px">
+				<div ng-if="event.kepek.length==1" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'300px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==2" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '50%','height':'300px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '50%','height':'300px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==3" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '50%','height':'300px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '50%','height':'150px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '50%','height':'150px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==4" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'200px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==5" >
+					<div style="display: inline;float: left;width: 50%;height: 300px">
+						<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'150px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+						<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'150px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					</div>
+					<div style="display: inline;float: left;width: 50%;height: 300px">
+						<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+						<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+						<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '100%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[4] + ')'}"  >
+					</div>
+				</div>
+				<div ng-if="event.kepek.length==6" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '66%','height':'200px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[4] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[5] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==7" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '66%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '66%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[4] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[5] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[6] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length==8" >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'200px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[4] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[5] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[6] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[7] + ')'}"  >
+				</div>
+				<div ng-if="event.kepek.length >= 9" >
+					<img  class="eventImgs thumb button" " id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[4] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[5] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[6] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[7] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[8] + ')'}"  >
+				</div>
+			</div>
+
 		</div>
-	</script>
-
 </ion-content>
+

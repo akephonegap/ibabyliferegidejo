@@ -8,20 +8,17 @@
 <ion-content>
 
 	<div style="padding: 10px;">
-		
-		<div class="carousel-demo" >
-			<ul rn-carousel rn-carousel-controls rn-carousel-index="carouselIndex" rn-carousel-buffered class="carousel1">
-				<li ng-repeat='image in images' >
-					<div ng-click="checkImagesSize() ? show($index) : console.log('fail')" ng-style="{'background-image': 'url('+image+')'}"  class="bgimage"></div>
-				</li>
-			</ul>
-			<h5>
-				{{images.length}}/10
-			</h5>
-		</div>
 
-	
-		
+		<div class="item item-body" style="text-align: center">
+			<ion-slide-box delegate-handle="theSlider">
+				<ion-slide ng-repeat="image in images">
+					<div class="box eventImage">
+						<img style="background-image: url('{{image}}')" ng-click="checkImagesSize() ? show($index) : console.log('fail')" class="eventImgs thumb button" id="kep" >						
+					</div>
+				</ion-slide>
+			</ion-slide-box>
+			<h5> {{images.length}}/10 </h5>
+		</div>
 
 		<div class="list">
 			<form id="newEvent">
@@ -31,18 +28,18 @@
 				</label>
 				<!--
 				<label class="item item-input item-select">
-					<div class="input-label">
-						Mérföldkő ?
-					</div>
-					<select ng-model="data.milestone" >
-						<option selected>Mosolygás</option>
-						<option>Nevetés</option>
-						<option>Lábfejrágcsálás</option>
-						<option>Különböző hangok mint berregés, buborék fújás</option>
-						<option>Hajfésülés, fogmosás</option>
-						<option>Kedvenc és elválaszthatatlan tárgyak</option>
-						<option>Puszi dobás</option>
-					</select> </label>
+				<div class="input-label">
+				Mérföldkő ?
+				</div>
+				<select ng-model="data.milestone" >
+				<option selected>Mosolygás</option>
+				<option>Nevetés</option>
+				<option>Lábfejrágcsálás</option>
+				<option>Különböző hangok mint berregés, buborék fújás</option>
+				<option>Hajfésülés, fogmosás</option>
+				<option>Kedvenc és elválaszthatatlan tárgyak</option>
+				<option>Puszi dobás</option>
+				</select> </label>
 				-->
 				<label class="item item-input item-select" ng-if ="!albumID">
 					<div class="input-label">

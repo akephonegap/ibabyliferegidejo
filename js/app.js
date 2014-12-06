@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic','angular-carousel'])
+angular.module('starter', ['ionic'])
 
 .run(function($ionicPlatform, $rootScope, $state, userService) {
   $ionicPlatform.ready(function() {
@@ -408,10 +408,12 @@ angular.module('starter', ['ionic','angular-carousel'])
 	$scope.albumline = function(albumid,albumname,albumowner){
 		
 		if (checkConnection()) {
+		
 			$rootScope.albumid = albumid;
 			$rootScope.albumname = albumname;
 			$rootScope.albumowner = albumowner;
 			$state.go('albumline');
+			
 		} else {
 			var myPopup = $ionicPopup.show({
 				template : 'Csatlakozz internethez, hogy ezt a funkciót használni tudd.',
@@ -422,6 +424,7 @@ angular.module('starter', ['ionic','angular-carousel'])
 				}]
 			});
 		}
+		
 
 	};
 	
@@ -531,7 +534,8 @@ angular.module('starter', ['ionic','angular-carousel'])
        
     };
     var onSuccess = function(imageData) {
-		$scope.picData = "data:image/jpeg;base64,"+imageData; 		
+		$scope.picData = "data:image/jpeg;base64,"+imageData; 
+			
 		$rootScope.images = [];				
 		$rootScope.images.push($scope.picData );	 		
 		$state.go('upload');			
@@ -594,11 +598,11 @@ angular.module('starter', ['ionic','angular-carousel'])
 					$scope.eventData.albumDate = $scope.album[0].albumDate;
 					$scope.eventData.albumSex = $scope.album[0].albumSex;
 
-					$http.post('http://192.168.1.184/ibabylifeserver/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
+					$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
 
 						$ionicLoading.hide();
 
-						dao.eventFeltolt(eventID);
+						dao.eventFeltolt(eventID); 
 						$scope.offlineEvents.splice(tombID, 1);
 
 						if ($scope.offlineEvents.length == 0) {
@@ -632,9 +636,6 @@ angular.module('starter', ['ionic','angular-carousel'])
 
 }])
 
-
-
-
 .controller('albumlineCtrl', ['$scope', '$rootScope', '$ionicPopup','$ionicPlatform','$ionicScrollDelegate', '$state', '$http', '$ionicModal', '$ionicSlideBoxDelegate', 'userService',
 function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $state, $http, $ionicModal, $ionicSlideBoxDelegate, userService) {
 	$scope.data = {};  
@@ -645,17 +646,15 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $s
 	    $state.go('home');
 	}, 100);
 
-	
-	$scope.items = [];
-	for (var i = 0; i < 1000; i++) {
-		$scope.items.push('Item ' + i);
-	}
+
 
 	$scope.newEvent = function() {		
 		var options = {
 				quality : 50,
 				destinationType : Camera.DestinationType.DATA_URL,
-				saveToPhotoAlbum: true,
+				saveToPhotoAlbum: true,							
+       			targetWidth: 1024,
+        		targetHeight: 1024,
 				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 				encodingType : 0,
 				correctOrientation : true
@@ -749,104 +748,95 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform,$ionicScrollDelegate, $s
 		}
 	};
 
+
+
+
 	$scope.albumData = {};
 	$scope.albumData.albumowner = $rootScope.albumowner;
 	$scope.albumData.albumid = $rootScope.albumid;
 	$scope.albumData.albumname = $rootScope.albumname;
 
-	$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/albumEvents.php', $scope.albumData).success(function(data, status, headers, config) {
-		dao.findAlbumByID($rootScope.albumid, function(album) {
-			$scope.album = album;
-			$scope.events = data;
+	$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/albumEvents.php', $scope.albumData).success(function(data, status, headers, config) {	
+		
+		if (data.length >=1) {
+			dao.findAlbumByID($rootScope.albumid, function(album) {
+				$scope.album = album;
+				$scope.events = data;
+
+				$.each($scope.events, function(key, value) {
+					$scope.events[key].kepek = [];
+					if ($scope.events[key].eventImg1 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg1);
+					if ($scope.events[key].eventImg2 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg2);
+					if ($scope.events[key].eventImg3 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg3);
+					if ($scope.events[key].eventImg4 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg4);
+					if ($scope.events[key].eventImg5 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg5);
+					if ($scope.events[key].eventImg6 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg6);
+					if ($scope.events[key].eventImg7 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg7);
+					if ($scope.events[key].eventImg8 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg8);
+					if ($scope.events[key].eventImg9 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg9);
+					if ($scope.events[key].eventImg10 != 'undefined')
+						$scope.events[key].kepek.push($scope.events[key].eventImg10);
+
+					
+
+				});
 			
-
-
-			$.each($scope.events, function(key, value) {
-				$scope.events[key].kepek = [];
-				if($scope.events[key].eventImg1!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg1);
-				if($scope.events[key].eventImg2!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg2);
-				if($scope.events[key].eventImg3!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg3);
-				if($scope.events[key].eventImg4!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg4);
-				if($scope.events[key].eventImg5!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg5);
-				if($scope.events[key].eventImg6!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg6);
-				if($scope.events[key].eventImg7!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg7);
-				if($scope.events[key].eventImg8!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg8);
-				if($scope.events[key].eventImg9!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg9);
-				if($scope.events[key].eventImg10!='undefined')
-				$scope.events[key].kepek.push($scope.events[key].eventImg10);
-				
-				console.log($scope.events[key].kepek);
 				
 				
-			}); 
+				var date1 = new Date($scope.album[0].albumDate);
+				var date2 = new Date();
+				var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+				var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
+				if (diffDays >= 365) {
+					$scope.kor = parseInt(diffDays / 365) + ' éves ';
+				} else if (diffDays < 365 && diffDays > 30) {
+					$scope.kor = parseInt(diffDays / 30) + ' hónapos ';
+				} else {
+					$scope.kor = diffDays + ' napos';
+				}
+				$scope.$apply();
+				
+			});
+		} else {
 			
-			var date1 = new Date($scope.album[0].albumDate);
-			var date2 = new Date();
-			var timeDiff = Math.abs(date2.getTime() - date1.getTime());
-			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+			dao.findAlbumByID($rootScope.albumid, function(album) {
+				$scope.album = album;
+				var date1 = new Date($scope.album[0].albumDate);
+				var date2 = new Date();
+				var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+				var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-			if (diffDays >= 365) {
-				$scope.kor = parseInt(diffDays / 365) + ' éves ';
-			} else if (diffDays < 365 && diffDays > 30) {
-				$scope.kor = parseInt(diffDays / 30) + ' hónapos ';
-			} else {
-				$scope.kor = diffDays + ' napos';
-			}
-			$scope.$apply();
-			$(".carousel1").css("width", $(window).width()*0.91);
-			$(".carousel1").css("height", $(window).width()*0.91);
-		});
+				if (diffDays >= 365) {
+					$scope.kor = parseInt(diffDays / 365) + ' éves ';
+				} else if (diffDays < 365 && diffDays > 30) {
+					$scope.kor = parseInt(diffDays / 30) + ' hónapos ';
+				} else {
+					$scope.kor = diffDays + ' napos';
+				}
+				$scope.$apply();
+
+			});
+		}
+
+	
+		
 
 	}).error(function(data, status, headers, config) {
 		alert('Nincs kapcsolat a szerverrel');
 	});
 
 	
-	$ionicModal.fromTemplateUrl('image-modal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
-
-    $scope.openModal = function() {
-      $scope.modal.show();
-    };
-
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
-
-    //Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-    });
-    // Execute action on hide modal
-    $scope.$on('modal.hide', function() {
-      // Execute action
-    });
-    // Execute action on remove modal
-    $scope.$on('modal.removed', function() {
-      // Execute action
-    });
-    $scope.$on('modal.shown', function() {
-      console.log('Modal is shown!');
-    });
-
-    $scope.showImage = function(imageurl) {      
-      $scope.imageSrc = imageurl;      
-      $scope.openModal();
-    };
+	
 
 
 }])
@@ -1108,8 +1098,8 @@ function($scope, $rootScope, $ionicPopup,$ionicPlatform, $state, $http,$ionicMod
 }])
 
 
-.controller('uploadCtrl', ['$scope', '$rootScope', '$state', '$ionicPopup','$http','$ionicLoading','$ionicPlatform','$ionicActionSheet', 'userService',
-function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatform,$ionicActionSheet, userService) {
+.controller('uploadCtrl', ['$scope', '$rootScope', '$state','$stateParams', '$ionicPopup','$http','$ionicSlideBoxDelegate','$ionicLoading','$ionicPlatform','$ionicActionSheet', 'userService',
+function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideBoxDelegate,$ionicLoading,$ionicPlatform,$ionicActionSheet, userService) {
 	$ionicPlatform.registerBackButtonAction(function () {	 
 	    var myPopup = $ionicPopup.show({		   
 		    title: 'Kilépés',
@@ -1155,12 +1145,12 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 		
 		
 	}
+	
+
+
 
 	$scope.images=$rootScope.images;	
 	$scope.$apply();
-	$(".carousel1").css("width", $(window).width()*0.95);
-	$(".carousel1").css("height", $(window).width()*0.95);
-
 
 	
 
@@ -1282,6 +1272,7 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 			});
 			
 		} else {
+		
 			$scope.data.albumid = $scope.data.album.id;
 			$scope.data.eventMessage = $scope.data.message;
 			$scope.data.eventMilestone = $scope.data.milestone;
@@ -1360,7 +1351,9 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 		var options = {
 			quality : 50,
 			destinationType : Camera.DestinationType.DATA_URL,
-			saveToPhotoAlbum: true, 
+			saveToPhotoAlbum: true, 			
+       		targetWidth: 1024,
+        	targetHeight: 1024,
 			sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 			encodingType : 0,
 			correctOrientation : true
@@ -1369,10 +1362,19 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 		navigator.camera.getPicture(onSuccess, onFail, options);
 	};
 	var onSuccess = function(imageData) {
+	
+	
 		$scope.picData = "data:image/jpeg;base64," + imageData;
 		$rootScope.kepAdat = imageData;			
-		$rootScope.images.push($scope.picData);	 		
-		$state.go('upload');	
+		$rootScope.images.push($scope.picData);	 
+	
+		$state.transitionTo($state.current, $stateParams, {
+			reload : true,
+			inherit : false,
+			notify : true
+		});
+
+		
 
 	};
 
@@ -1390,9 +1392,7 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 			return false;
 		}
 	};
-
-   
-	
+  
 	$scope.show = function(index) {
 		
 		// Show the action sheet
@@ -1406,11 +1406,17 @@ function($scope, $rootScope, $state, $ionicPopup,$http,$ionicLoading,$ionicPlatf
 			buttonClicked : function(index) {
 				return true;
 			},
-			destructiveButtonClicked : function() {				
-				$rootScope.images.splice(index, 1);
-				$scope.images=$rootScope.images;	
-				$scope.$apply();
-				return true;
+			destructiveButtonClicked : function() {	
+			
+				$rootScope.images.splice(index,1);				
+
+				$state.transitionTo($state.current, $stateParams, {
+					reload : true,
+					inherit : false,
+					notify : true
+				}); 
+
+
 			}
 		});
 	};

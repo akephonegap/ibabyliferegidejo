@@ -120,7 +120,7 @@ window.dao = {
 	},
 	eventFeltolt : function(eventID) {
 		this.db.transaction(function(tx) {
-			var sql = "UPDATE events SET feltoltve=1 WHERE id = " + eventID;
+			var sql = "DELETE FROM events WHERE id = " + eventID;
 			tx.executeSql(sql, this.txErrorHandler, function(tx, results) {
 				var len = results.rows.length, event = [], i = 0;
 				for (; i < len; i = i + 1) {
