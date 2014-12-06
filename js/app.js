@@ -520,7 +520,7 @@ angular.module('starter', ['ionic'])
 		} else {
 			var options = {
 				quality : 50,
-				destinationType : Camera.DestinationType.DATA_URL,
+				destinationType : Camera.DestinationType.FILE_URI,
 				saveToPhotoAlbum: true,
 				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 				encodingType : 0,
@@ -533,12 +533,49 @@ angular.module('starter', ['ionic'])
      
        
     };
+    
+
+
+	function convertImgToBase64(url, callback, outputFormat) {
+		var canvas = document.createElement('CANVAS');
+		var ctx = canvas.getContext('2d');
+		var img = new Image;
+		img.crossOrigin = '*';
+		img.onload = function() {
+			canvas.height = img.height;
+			canvas.width = img.width;
+			ctx.drawImage(img, 0, 0);
+			var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+			callback.call(this, dataURL);
+			// Clean up
+			canvas = null;
+		};
+		img.src = url;
+	}
+
+
     var onSuccess = function(imageData) {
-		$scope.picData = "data:image/jpeg;base64,"+imageData; 
+    
+		alert('mehet ?');
+		
+		
+
+		window.plugins.Base64.encodeFile(imageData, function(base64) {
+			alert('evlileg ok');
 			
-		$rootScope.images = [];				
-		$rootScope.images.push($scope.picData );	 		
-		$state.go('upload');			
+			$rootScope.images = [];
+			$rootScope.images.push(base64);
+			$state.go('upload');
+		});
+
+		
+
+
+		
+		// cdvfile://localhost/persistent/DCIM/Camera/1417883943936.jpg
+		/*
+		
+		*/	
     };
     
     
