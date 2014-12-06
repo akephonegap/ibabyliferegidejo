@@ -5,21 +5,21 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
 
+
 .run(function($ionicPlatform, $rootScope, $state, userService) {
-  $ionicPlatform.ready(function() {
-    
-  });
-    /*
-  // UI Router Authentication Check
-  $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
-    if (toState.data.authenticate && !userService.isLoggedIn()){
-      // User isn’t authenticated
-      $state.transitionTo("login");
-      event.preventDefault(); 
-    }
-  });
-  */
+	$ionicPlatform.ready(function() {
+		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+		// for form inputs)
+		if (window.cordova && window.cordova.plugins.Keyboard) {
+			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+		}
+		if (window.StatusBar) {
+			StatusBar.styleDefault();
+		}
+	});
+
 })
+
 
 .config(function($stateProvider, $urlRouterProvider){
   $stateProvider
@@ -249,20 +249,20 @@ angular.module('starter', ['ionic'])
    
    
    
-	
+	/*
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
 	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
-	
+	*/
 	
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		
+		/*
 		 if ($scope.offlineEvents.length == 0) {
 		 cordova.plugins.notification.badge.clear();
 		 } else {
 		 cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 		 }
-		 
+		 */
 
 	});	
 
@@ -373,7 +373,7 @@ angular.module('starter', ['ionic'])
 				          $http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/feedback.php', $scope.feedbackData).success(function(data, status, headers, config) {			
 									
 								var myPopup = $ionicPopup.show({
-									template : 'Köszönönjük, hogy üzenetével támogatja a munkánk!',
+									template : 'Köszönjük, hogy üzenetével támogatja a munkánk!',
 									title : 'Segíts !',
 									buttons : [{
 										text : '<b>Rendben</b>',
@@ -604,13 +604,13 @@ angular.module('starter', ['ionic'])
 
 						dao.eventFeltolt(eventID); 
 						$scope.offlineEvents.splice(tombID, 1);
-
+/*
 						if ($scope.offlineEvents.length == 0) {
 							cordova.plugins.notification.badge.clear();
 						} else {
 							cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 						}
-
+*/
 					}).error(function(data, status, headers, config) {
 						$ionicLoading.hide();	
 						alert('Nincs kapcsolat a szerverrel');

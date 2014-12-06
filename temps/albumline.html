@@ -17,7 +17,18 @@
 		<button style="color: white" class="button button-icon icon ion-plus" ng-click="newEvent()"></button>
 	</div>
 </ion-header-bar>
-<ion-content delegate-handle="mainScroll" has-bouncing="true" scroll="true">
+<ion-header-bar class="bar-light bar-subheader transparent" >
+	<div style="margin: 0px 5px" class="item" >
+		<h2>{{album[0].albumName}}
+		<br />
+		<p>
+			{{kor}}
+		</p></h2>
+
+	</div>
+</ion-header-bar>
+<ion-content delegate-handle="mainScroll" has-bouncing="true" scroll="true" style="padding-top: 30px">
+
 	<div class="list" style="max-width: 600px;margin: auto auto">
 
 		<div  class="item my-item transparent"
@@ -25,23 +36,6 @@
 		collection-item-width="'100%'"
 		collection-item-height="450"
 		ng-style="450">
-
-			<div class="item">
-				<p>
-					<z ng-if="event.eventMilestone!='undefined'">
-						{{event.eventMilestone}}
-						<br>
-					</z>
-
-					{{event.eventDate}}
-					<br />
-					{{mikorTortent(event.eventDate)}}
-				</p>
-
-			</div>
-			<div ng-if="event.eventMessage!='undefined'" class="item">
-				{{event.eventMessage}}
-			</div>
 
 			<div id="kepekDiv" style="text-align: center;padding: 0px">
 				<div ng-if="event.kepek.length==1" >
@@ -101,7 +95,7 @@
 					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[7] + ')'}"  >
 				</div>
 				<div ng-if="event.kepek.length >= 9" >
-					<img  class="eventImgs thumb button" " id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
+					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[0] + ')'}"  >
 					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[1] + ')'}"  >
 					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[2] + ')'}"  >
 					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[3] + ')'}"  >
@@ -112,7 +106,29 @@
 					<img  class="eventImgs thumb button" id="kep" ng-style="{'width' : '33%','height':'100px', 'background-image': 'url(http://mobileapps.fekiwebstudio.hu/ibabylife/image.php?image=' + event.kepek[8] + ')'}"  >
 				</div>
 			</div>
+			<div ng-if="event.eventMessage!='undefined'" class="item ">
+				{{event.eventMessage}}
+			</div>
+			<div class="item" style="text-align: right;margin: 0px;padding: 0px">
+				<p>
+					<z ng-if="event.eventMilestone!='undefined'">
+						{{event.eventMilestone}}
+
+					</z>
+				<p style="padding-left:10px;float: left;display: inline;font-size: 12px">
+					{{event.eventDate}}
+				</p>
+				<p style="padding-right:10px; float: right;display: inline;font-size: 12px">
+					{{mikorTortent(event.eventDate)}}
+				</p>
+
+				</p>
+
+			</div>
 
 		</div>
+
+	</div>
+
 </ion-content>
 
