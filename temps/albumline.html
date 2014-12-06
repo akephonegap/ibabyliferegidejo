@@ -19,11 +19,15 @@
 </ion-header-bar>
 <ion-header-bar class="bar-light bar-subheader transparent" >
 	<div style="margin: 0px 5px" class="item" >
-		<h2>{{album[0].albumName}}
+		<h2 style="display: inline;float: left">{{album[0].albumName}}
 		<br />
 		<p>
 			{{kor}}
 		</p></h2>
+		<p style="display: inline;float: right;text-align: right">
+			{{album[0].albumSex}} <i ng-if="album[0].albumSex=='Fiú'" class="icon ion-male"></i><i ng-if="album[0].albumSex=='Lány'" class="icon ion-female"></i><br />
+			{{album[0].albumDate}} <i class="icon ion-clock"></i>
+		</p>
 
 	</div>
 </ion-header-bar>
