@@ -562,7 +562,7 @@ angular.module('starter', ['ionic'])
 
 		window.plugins.Base64.encodeFile('/mnt/sdcard/DCIM/Camera/1417891950187.jpg', function(base64) {
 			alert('evlileg ok');
-			
+			alert(base64);
 			$rootScope.images = [];
 			$rootScope.images.push(base64);
 			$state.go('upload');
