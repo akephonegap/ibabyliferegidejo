@@ -520,7 +520,7 @@ angular.module('starter', ['ionic'])
 		} else {
 			var options = {
 				quality : 50,
-				destinationType : Camera.DestinationType.FILE_URI,
+				destinationType : Camera.DestinationType.DATA_URL,
 				saveToPhotoAlbum: true,
 				sourceType : 1, // 0:Photo Library, 1=Camera, 2=Saved Photo Album
 				encodingType : 0,
@@ -536,73 +536,15 @@ angular.module('starter', ['ionic'])
     
 
 
-	function convertImgToBase64(url, callback, outputFormat) {
-		var canvas = document.createElement('CANVAS');
-		var ctx = canvas.getContext('2d');
-		var img = new Image;
-		img.crossOrigin = '*';
-		img.onload = function() {
-			canvas.height = img.height;
-			canvas.width = img.width;
-			ctx.drawImage(img, 0, 0);		
-			var dataURL = canvas.toDataURL(outputFormat || 'image/png');
-			callback.call(this, dataURL);
-			// Clean up
-			canvas = null;
-		};
-
 	
-		
-		img.src = url;   
-		                                                                 
-	}
 
 	var onSuccess = function(imageUri) {
-
-		alert(imageUri+"asd");
-		
-		function downloadImage(url, fileName) {
-				var ft = new FileTransfer();
-				ft.download(url, 'cdvfile://localhost/persistent/IngGap/' + fileName, function(entry) {
-					//console.log("download complete: " + entry.toURI());
-
-				}, function(error) {
-					//console.log("download error" + error.code);
-				});
-			}
-
-		
-		
-		document.getElementById("hatter").crossOrigin = 'anonymous';
-		document.getElementById("hatter").src = 'cdvfile://localhost/persistent/DCIM/Camera/1417896587763.jpg';  
-		document.getElementById("hatter").onload = function() {
-			alert('kép betöltve :(');
 	
-			var canvas = document.createElement('CANVAS');
-			var ctx = canvas.getContext('2d'); 
-
-			canvas.height = document.getElementById("hatter").height;
-			canvas.width = document.getElementById("hatter").width;
-			ctx.drawImage(document.getElementById("hatter"), 0, 0);		
-			var dataURL = canvas.toDataURL('image/png');
-			alert(dataURL);
-		};
 		
-		/*
-		convertImgToBase64(imageUri, function(base64Img) {			
 			$rootScope.images = [];
-			$rootScope.images.push(base64Img);
+			$rootScope.images.push('data:image/jpeg;base64,'+imageUri);
 			$state.go('upload');
-		}); 
- */
 
-/*
-		
-
-		// cdvfile://localhost/persistent/DCIM/Camera/1417896587763.jpg
-		/*
-
-		 */
 	}; 
 
     
@@ -1314,7 +1256,27 @@ function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideB
 				
 			
 				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
-					$ionicLoading.hide();								
+		
+				
+					$ionicLoading.hide();					
+					var ft = new FileTransfer();
+	
+					
+					for (var i in data) {
+						var url = data[i];
+						
+						var imgName = url.replace("files/", "");
+						
+						ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/'+url, 'cdvfile://localhost/persistent/DCIM/Camera/'+imgName, function(entry) {
+							alert("download complete: " + entry.toURI());
+							refreshMedia.refresh('cdvfile://localhost/persistent/DCIM/Camera/'+imgName);
+						}, function(error) {
+							alert("download error" + error.code);
+						});
+					}
+
+					
+												
 					var myPopup = $ionicPopup.show({
 						template : 'Ezt az eseményt sikeresen feltöltöttük !',
 						title : 'Esemény feltöltve !',
