@@ -1268,10 +1268,9 @@ function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideB
 						var imgName = url.replace("files/", "");
 						
 						ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/'+url, 'cdvfile://localhost/persistent/DCIM/Camera/'+imgName, function(entry) {
-							alert("download complete: " + entry.toURI());
-							refreshMedia.refresh(entry.toURI());
+													
 						}, function(error) {
-							alert("download error" + error.code);
+							
 						});
 					}
 
