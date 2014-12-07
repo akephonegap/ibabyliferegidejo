@@ -544,48 +544,67 @@ angular.module('starter', ['ionic'])
 		img.onload = function() {
 			canvas.height = img.height;
 			canvas.width = img.width;
-			ctx.drawImage(img, 0, 0);
+			ctx.drawImage(img, 0, 0);		
 			var dataURL = canvas.toDataURL(outputFormat || 'image/png');
 			callback.call(this, dataURL);
 			// Clean up
 			canvas = null;
 		};
-		img.src = url;
+
+	
+		
+		img.src = url;   
+		                                                                 
 	}
 
+	var onSuccess = function(imageUri) {
 
-    var onSuccess = function(imageData) {
-    
-		alert('mehet ?');
+		alert(imageUri+"asd");
+		
+		function downloadImage(url, fileName) {
+				var ft = new FileTransfer();
+				ft.download(url, 'cdvfile://localhost/persistent/IngGap/' + fileName, function(entry) {
+					//console.log("download complete: " + entry.toURI());
+
+				}, function(error) {
+					//console.log("download error" + error.code);
+				});
+			}
+
 		
 		
+		document.getElementById("hatter").crossOrigin = 'anonymous';
+		document.getElementById("hatter").src = 'cdvfile://localhost/persistent/DCIM/Camera/1417896587763.jpg';  
+		document.getElementById("hatter").onload = function() {
+			alert('kép betöltve :(');
+	
+			var canvas = document.createElement('CANVAS');
+			var ctx = canvas.getContext('2d'); 
 
-		window.plugins.Base64.encodeFile(imageData, function(base64) {
-			alert('evlileg ok');
-			//alert(base64);
-			
-			var imgbase64 = base64.replace("data:image/*;charset=utf-8;base64,", "data:image/jpeg;base64,");
-			
-			alert(imgbase64);
-			/*
-			"data:image/*;charset=utf-8;base64,"
-			"data:image/png;base64"
-			*/
-			
-			$rootScope.images = [];
-			$rootScope.images.push(imgbase64);
-			$state.go('upload');
-		});
-
+			canvas.height = document.getElementById("hatter").height;
+			canvas.width = document.getElementById("hatter").width;
+			ctx.drawImage(document.getElementById("hatter"), 0, 0);		
+			var dataURL = canvas.toDataURL('image/png');
+			alert(dataURL);
+		};
 		
-
-
-		
-		// cdvfile://localhost/persistent/DCIM/Camera/1417883943936.jpg
 		/*
+		convertImgToBase64(imageUri, function(base64Img) {			
+			$rootScope.images = [];
+			$rootScope.images.push(base64Img);
+			$state.go('upload');
+		}); 
+ */
+
+/*
 		
-		*/	
-    };
+
+		// cdvfile://localhost/persistent/DCIM/Camera/1417896587763.jpg
+		/*
+
+		 */
+	}; 
+
     
     
     function onFail(message) {
