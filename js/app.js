@@ -247,22 +247,44 @@ angular.module('starter', ['ionic'])
 		  });	 
 	}, 100);
    
+
+	if (localStorage.getItem("saveImages") === null) {
+		window.localStorage.setItem("saveImages", 0 );
+		$scope.saveImages = false;
+	}else{
+		if(localStorage.getItem("saveImages")==1){
+			$scope.saveImages = true;
+		}else{
+			$scope.saveImages = false;
+		}		
+	}
+	
+	$scope.saveImageHandler = function(saveImages){
+		
+		if (saveImages) {
+			window.localStorage.setItem("saveImages", 1);
+		} else {
+			window.localStorage.setItem("saveImages", 0);
+		}
+
+	};
+
+    
    
-   
-	/*
+	
 	cordova.plugins.notification.badge.configure({ title: '%d feltöltetlen esemény' });
 	cordova.plugins.notification.badge.configure({ smallIcon: 'icon' });	
-	*/
+	
 	
 	dao.getOfflineEvent(function(events) {
 		$scope.offlineEvents = events;
-		/*
+		
 		 if ($scope.offlineEvents.length == 0) {
 		 cordova.plugins.notification.badge.clear();
 		 } else {
 		 cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 		 }
-		 */
+		 
 
 	});	
 
@@ -604,20 +626,37 @@ angular.module('starter', ['ionic'])
 					$scope.eventData.albumName = $scope.album[0].albumName;
 					$scope.eventData.albumDate = $scope.album[0].albumDate;
 					$scope.eventData.albumSex = $scope.album[0].albumSex;
+					$scope.eventData.saveImages = localStorage.getItem("saveImages");
 
 					$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {
 
 						$ionicLoading.hide();
+						
+						if (( typeof data === 'object')) {
+							var ft = new FileTransfer();
+
+							for (var i in data) {
+								var url = data[i];
+
+								var imgName = url.replace("files/", "");
+
+								ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/DCIM/Camera/' + imgName, function(entry) {
+								}, function(error) {
+								});
+							}
+
+						};
+
 
 						dao.eventFeltolt(eventID); 
 						$scope.offlineEvents.splice(tombID, 1);
-/*
+
 						if ($scope.offlineEvents.length == 0) {
 							cordova.plugins.notification.badge.clear();
 						} else {
 							cordova.plugins.notification.badge.set($scope.offlineEvents.length);
 						}
-*/
+
 					}).error(function(data, status, headers, config) {
 						$ionicLoading.hide();	
 						alert('Nincs kapcsolat a szerverrel');
@@ -1253,26 +1292,29 @@ function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideB
 				$scope.eventData.albumName = $scope.album[0].albumName;
 				$scope.eventData.albumDate = $scope.album[0].albumDate;
 				$scope.eventData.albumSex = $scope.album[0].albumSex;
+				$scope.eventData.saveImages = localStorage.getItem("saveImages");
 				
 			
 				$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/newEsemeny.php', $scope.eventData).success(function(data, status, headers, config) {			
 		
 				
-					$ionicLoading.hide();					
-					var ft = new FileTransfer();
-	
+					$ionicLoading.hide();	
 					
-					for (var i in data) {
-						var url = data[i];
-						
-						var imgName = url.replace("files/", "");
-						
-						ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/'+url, 'cdvfile://localhost/persistent/DCIM/Camera/'+imgName, function(entry) {
-													
-						}, function(error) {
-							
-						});
-					}
+				
+					if (( typeof data === 'object')) {
+						var ft = new FileTransfer();
+
+						for (var i in data) {
+							var url = data[i];
+
+							var imgName = url.replace("files/", "");
+
+							ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/DCIM/Camera/' + imgName, function(entry) {
+							}, function(error) {
+							});
+						}
+
+					};
 
 					
 												

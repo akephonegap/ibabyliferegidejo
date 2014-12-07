@@ -5311,8 +5311,8 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     border-color: #43cee6;
     background-color: #43cee6; }
   .toggle.toggle-assertive input:checked + .track {
-    border-color: #ef4e3a;
-    background-color: #ef4e3a; }
+    border-color: #E3008A;
+    background-color: #E3008A; }
   .toggle.toggle-balanced input:checked + .track {
     border-color: #66cc33;
     background-color: #66cc33; }

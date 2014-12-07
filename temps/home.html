@@ -10,7 +10,7 @@
 
 <ion-side-menus>
 	<!-- Center content -->
-	<ion-side-menu-content edge-drag-threshold="false"  >
+	<ion-side-menu-content edge-drag-threshold="false" drag-content="false"  >
 		<ion-header-bar align-title="center" style="background-color: #F521A2 ">
 			<h1 style="color: white"  class="title">IBabyLife</h1>
 			<div  class="buttons">
@@ -25,14 +25,28 @@
 				Kamera
 			</button>
 
-			<button  class="button button-block button-light icon ion-clock" data-ng-click="timeline()">
-				Idővonal
-			</button>
-			
-			<button  class="button button-block button-light icon ion-android-book" data-ng-click="fotoalbum()">
-				Fotóalbum készítés
-			</button>
-			
+			<p ng-if="minealbums.length>0">
+
+				<ion-scroll scrollbar-x="false"   direction="x" id="kepek" style="padding-bottom: 10px" class="wide-as-needed" >
+
+					<button ng-click="albumline(album.id,album.albumName,album.albumOwner)" class="item item-thumbnail-left album button" ng-repeat='album in minealbums'>
+						<p>
+							{{album.albumName}}
+						</p>
+					</button>
+				</ion-scroll>
+			</p>
+
+			<p ng-if="familyalbums.length>0">
+				<ion-scroll  scrollbar-x="false"  direction="x" id="kepek" style="padding-bottom: 10px" class="wide-as-needed" >
+
+					<button ng-click="albumline(album.id,album.albumName,album.albumOwner)" class="item item-thumbnail-left album button" ng-repeat='album in familyalbums'>
+						<p>
+							{{album.albumName}}
+						</p>
+					</button>
+				</ion-scroll>
+			</p>
 
 		</div>
 		<ion-footer-bar class="transparent" >
@@ -54,36 +68,18 @@
 			<br />
 			{{user.email}} </a>
 
-			<a  class="item item-icon-left" ng-click="newalbum()"> <i class="icon ion-ios7-albums"></i> Új album</a>
+			<button  class="button button-block button-light icon ion-ios7-albums" data-ng-click="newalbum()">
+				Új album
+			</button>
 
-			<p ng-if="minealbums.length>0">
-				<button  class="button button-block button-light">
-					Saját albumok
-				</button>
-				<ion-scroll  direction="x" id="kepek" style="padding-bottom: 10px" class="wide-as-needed" >
+			<button  class="button button-block button-light icon ion-android-book" data-ng-click="fotoalbum()">
+				Fotóalbum készítés
+			</button>
 
-					<button ng-click="albumline(album.id,album.albumName,album.albumOwner)" class="item item-thumbnail-left album button" ng-repeat='album in minealbums'>
-						<p>
-							{{album.albumName}}
-						</p>
-					</button>
-				</ion-scroll>
-			</p>
-
-			<p ng-if="familyalbums.length>0">
-				<button  class="button button-block button-light">
-					Családi albumok
-				</button>
-				<ion-scroll  direction="x" id="kepek" style="padding-bottom: 10px" class="wide-as-needed" >
-
-					<button ng-click="albumline(album.id,album.albumName,album.albumOwner)" class="item item-thumbnail-left album button" ng-repeat='album in familyalbums'>
-						<p>
-							{{album.albumName}}
-						</p>
-					</button>
-				</ion-scroll>
-			</p>
-
+			<ion-toggle ng-model="saveImages" ng-checked="saveImages" ng-change="saveImageHandler(saveImages)" toggle-class="toggle-assertive">
+				<i class="icon ion-images"></i>
+				Képek mentése
+			</ion-toggle>
 			<a ng-if="offlineEvents.length>0" class="item item-icon-left" > <i class="icon ion-shuffle"></i> Feltöltése vár <span class="badge badge-assertive">{{offlineEvents.length}}</span> </a>
 
 			<div class="list" style="padding: 15px">

@@ -83,22 +83,6 @@ version   = "1.0.0">
 	<gap:plugin name="org.apache.cordova.splashscreen" />
 	<gap:plugin name="org.apache.cordova.vibration" />
 	
-	<js-module src="www/MediaScannerPlugin.js" name="MediaScannerPlugin">
-		<clobbers target="window.MediaScannerPlugin" />
-	</js-module>
-
-	<!-- android -->
-	<platform name="android">
-
-		<config-file target="config.xml" parent="/*">
-			<feature name="MediaScannerPlugin" >
-				<param name="android-package" value="org.sfl.MediaScannerPlugin.MediaScannerPlugin"/>
-			</feature>
-		</config-file>
-		<source-file src="src/android/MediaScannerPlugin.java"
-		target-dir="src/org/sfl/MediaScannerPlugin" />
-
-	</platform>
 
 	<!-- Third party plugins -->
 	<!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
