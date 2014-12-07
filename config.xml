@@ -84,7 +84,6 @@ version   = "1.0.0">
 	<gap:plugin name="org.apache.cordova.vibration" />
 	
 	<gap:plugin name="pluginRefreshMedia" value="com.greenqloud.plugin.PluginRefreshMedia"/>
-	<gap:plugin name="com.greenqloud.plugin.PluginRefreshMedia"/>
 
 	<!-- Third party plugins -->
 	<!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
