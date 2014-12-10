@@ -13,7 +13,7 @@
 	</div>
 	<h1 style="color: white"  class="title">IBabyLife</h1>
 	<div class="buttons">
-		<button style="color: white" class="button button-icon icon ion-android-share" ng-click="share()"></button>
+		<button style="color: white" class="button button-icon icon ion-android-share-alt" ng-click="share()"></button>
 		<button style="color: white" class="button button-icon icon ion-plus" ng-click="newEvent()"></button>
 	</div>
 </ion-header-bar>
@@ -24,9 +24,9 @@
 		<p>
 			{{kor}}
 		</p></h2>
-		<p style="display: inline;float: right;text-align: right">
+		<p style="display: inline;float: right;text-align: right;padding-right: 5px">
 			{{album[0].albumSex}} <i ng-if="album[0].albumSex=='Fiú'" class="icon ion-male"></i><i ng-if="album[0].albumSex=='Lány'" class="icon ion-female"></i><br />
-			{{album[0].albumDate}} <i class="icon ion-clock"></i>
+			{{honap(album[0].albumDate)}}<i class="icon ion-ios-heart"></i>
 		</p>
 
 	</div>
@@ -120,10 +120,10 @@
 
 					</z>
 				<p style="padding-left:10px;float: left;display: inline;font-size: 12px">
-					{{event.eventDate}}
+				 <i class="icon ion-clock"></i> {{honap(event.eventDate)}} 
 				</p>
 				<p style="padding-right:10px; float: right;display: inline;font-size: 12px">
-					{{mikorTortent(event.eventDate)}}
+					{{mikorTortent(event.eventDate)}} <i class="icon ion-ios-calendar-outline"></i>
 				</p>
 
 				</p>

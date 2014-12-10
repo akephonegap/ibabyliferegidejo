@@ -291,6 +291,27 @@ angular.module('starter', ['ionic'])
 	//dao.dropTables();
 	// albumszinkronizálás
 
+
+	$rootScope.honap = function(datum) {
+		var honapok = ['jan.', 'feb.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];	
+		var ev,honap,nap,ora,perc,masodperc;
+		var date = new Date(datum);
+		
+		ev = date.getFullYear() ;
+		honap = honapok[date.getMonth()] ;
+		nap = date.getDay()+1 ;
+		ora = date.getHours() ;
+		
+		perc = date.getMinutes() ;		
+		if(perc<10) perc = '0'+perc;
+		
+		masodperc = date.getSeconds() ;
+		
+		
+		return ev+". "+honap+" "+nap+"   "+ora+":"+perc+" ";
+		
+	}; 
+
 	dao.findAllAlbum(function(y) {
 		$scope.familyalbums = [];
 		$scope.minealbums = [];
@@ -305,7 +326,7 @@ angular.module('starter', ['ionic'])
 				$scope.minealbums.push(album);
 			}
 		}); 		
-		
+		$scope.$apply();
 		
 		$http.post('http://mobileapps.fekiwebstudio.hu/ibabylife/myAlbums.php', {
 			albumowner : $rootScope.user.email
@@ -333,7 +354,7 @@ angular.module('starter', ['ionic'])
 
 				}
 			}else{
-				alert(myalbums);
+				//alert(myalbums);
 			};
 	
 	
@@ -640,7 +661,7 @@ angular.module('starter', ['ionic'])
 
 								var imgName = url.replace("files/", "");
 
-								ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/DCIM/Camera/' + imgName, function(entry) {
+								ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/Pictures/iBabyLife/' + imgName, function(entry) {
 								}, function(error) {
 								});
 							}
@@ -1309,7 +1330,7 @@ function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideB
 
 							var imgName = url.replace("files/", "");
 
-							ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/DCIM/Camera/' + imgName, function(entry) {
+							ft.download('http://mobileapps.fekiwebstudio.hu/ibabylife/' + url, 'cdvfile://localhost/persistent/Pictures/iBabyLife/' + imgName, function(entry) {
 							}, function(error) {
 							});
 						}
