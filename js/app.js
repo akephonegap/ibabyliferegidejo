@@ -359,6 +359,7 @@ angular.module('starter', ['ionic'])
 	
 	
 			
+			
 			dao.findAllAlbum(function(y) {
 				$scope.familyalbums = [];
 				$scope.minealbums = [];
@@ -369,8 +370,11 @@ angular.module('starter', ['ionic'])
 					} else {
 						$scope.minealbums.push(album);
 					}
+
 				});
-			}); 
+				$scope.$apply();
+			});
+
 
 
 
@@ -1189,9 +1193,24 @@ function($scope, $rootScope, $state,$stateParams, $ionicPopup,$http,$ionicSlideB
 	}, 100);
 
 	$scope.home = function() {
-		$rootScope.images = [];
-		$rootScope.albumID = false;
-		$state.go('home');
+		 var myPopup = $ionicPopup.show({		   
+		    title: 'Kilépés',
+		    subTitle: 'Biztos visszalépsz a főmenübe ?',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Nem' },
+		      {
+		        text: '<b>Igen</b>',
+		        type: 'button-pink',
+		       	onTap: function(e) {
+					$rootScope.images = [];
+					$rootScope.albumID = false;
+					$state.go('home');
+				}
+
+		      },
+		    ]
+		  });	 	  
 	}; 
 
 
